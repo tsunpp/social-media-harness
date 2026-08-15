@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "default_profile": "vogue-derived-editorial",
+  "apply_when_brief_field_missing_or_null": true,
+  "explicit_disable_values": ["none", "disabled"],
+  "scope": ["narrative_planning", "shot_selection", "segment_contracts", "image_generation", "video_generation", "post_and_cover_review"],
+  "note": "Global HARNESS visual language. Campaigns may opt out only by explicitly setting visual_style_profile to none."
+}

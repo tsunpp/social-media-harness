@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Planning Review Request",
+  "type": "object",
+  "required": ["schema_version", "project", "campaign", "plan_path", "plan_options", "planning_context", "owner_gate"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "project": {"type": "string", "minLength": 1},
+    "campaign": {"type": "string", "minLength": 1},
+    "plan_path": {"type": "string", "minLength": 1},
+    "plan_options": {"type": "object"},
+    "planning_context": {"type": "object"},
+    "owner_gate": {"type": "string", "minLength": 1}
+  }
+}
+

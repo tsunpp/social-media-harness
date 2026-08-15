@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Narrative-First Creative Plan Options",
+  "type": "object",
+  "required": ["schema_version", "campaign", "options"],
+  "properties": {
+    "schema_version": {"const": 2},
+    "campaign": {"type": "string", "minLength": 1},
+    "options": {
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "target_duration_seconds", "concept", "opening_hook", "timeline", "strength", "risk", "narrative_contract", "narrative_evidence_coverage"],
+        "properties": {
+          "id": {"enum": ["A", "B", "C"]},
+          "narrative_contract": {
+            "type": "object",
+            "required": ["audience_question", "middle_change", "visual_climax", "ending_insight", "text_progression", "source_feasibility", "beats"]
+          },
+          "narrative_evidence_coverage": {"type": "array", "minItems": 5}
+          ,"visual_style_contract": {"type": "object"}
+        }
+      }
+    }
+  }
+}

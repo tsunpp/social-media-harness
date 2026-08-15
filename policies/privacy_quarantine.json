@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-08-11",
+  "authorized_by": "human_owner",
+  "rules": [
+    {
+      "asset_id": "AST-D2086C14054F",
+      "filename": "IMG_5202.JPG",
+      "classification": "HIGH_SENSITIVITY_PERSONAL_IDENTITY_DOCUMENT",
+      "reason": "Visible passport with personal identity information.",
+      "retain_original": true,
+      "delete_original": false,
+      "external_model_pixels_allowed": false,
+      "external_model_metadata_allowed": true,
+      "automated_selection_allowed": false,
+      "human_override_required": true
+    }
+  ]
+}
+

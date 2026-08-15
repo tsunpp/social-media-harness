@@ -1,0 +1,5 @@
+name: example-project
+purpose: Synthetic public demonstration only
+default_language: en
+publication_authority: owner_only
+private_media_allowed_in_repository: false

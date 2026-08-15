@@ -1,0 +1,9 @@
+{
+  "decision": "approve_with_changes",
+  "accepted_comments": ["V-001"],
+  "rejected_comments": ["V-002"],
+  "reason": "接受隐私遮挡，但保留真实现场声音。",
+  "decided_by": "owner",
+  "decided_at": "2026-08-09T18:30:00-07:00"
+}
+

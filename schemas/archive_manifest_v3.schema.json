@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Harness 2.6 Immutable Archive Manifest",
+  "type": "object",
+  "required": ["schema_version", "archive_id", "display_name", "campaign", "created_at", "status", "platforms", "master", "assets", "story_contract", "reviews", "owner_approval", "publishing_authorized", "publication_gate"],
+  "properties": {
+    "schema_version": {"const": 3},
+    "archive_id": {"pattern": "^SM[0-9]{10}$"},
+    "status": {"enum": ["APPROVED_NOT_PUBLISHED", "READY_NOT_PUBLISHED"]},
+    "publishing_authorized": {"const": false},
+    "assets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["path", "bytes", "sha256"],
+        "properties": {"sha256": {"pattern": "^[A-Fa-f0-9]{64}$"}}
+      }
+    }
+  }
+}

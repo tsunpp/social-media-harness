@@ -1,0 +1,32 @@
+{
+  "schema_version": 2,
+  "engine_api_version": "2.6",
+  "status": "ACTIVE",
+  "recipients": {
+    "claude": {
+      "status": "AUTHORIZED",
+      "allowed_materials": ["sanitized_dossier", "privacy_cleared_timeline", "rendered_video", "cover", "copy"],
+      "identifiable_people_allowed": false,
+      "metadata_stripping_required": true
+    },
+    "minimax": {
+      "status": "AUTHORIZED",
+      "allowed_materials": ["sanitized_dossier", "source_proxy", "rendered_video", "cover", "copy"],
+      "identifiable_people_allowed": false,
+      "metadata_stripping_required": true
+    },
+    "kimi-k3": {
+      "status": "NOT_AUTHORIZED",
+      "allowed_materials": ["sanitized_dossier", "privacy_cleared_timeline", "copy", "provenance"],
+      "identifiable_people_allowed": false,
+      "metadata_stripping_required": true
+    },
+    "deepseek": {
+      "status": "NOT_AUTHORIZED",
+      "allowed_materials": ["sanitized_dossier", "copy", "provenance"],
+      "identifiable_people_allowed": false,
+      "metadata_stripping_required": true
+    }
+  },
+  "publication_authorized": false
+}

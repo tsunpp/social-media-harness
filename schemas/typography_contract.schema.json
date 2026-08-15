@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HARNESS Typography Director Contract",
+  "type": "object",
+  "required": ["schema_version", "campaign", "style_profile", "canvas", "palette", "font_roles", "segments", "shared_targets", "validation", "publishing_authorized"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "campaign": {"type": "string", "minLength": 1},
+    "style_profile": {"const": "vogue-derived-editorial"},
+    "canvas": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": {"width": {"type": "integer", "minimum": 1}, "height": {"type": "integer", "minimum": 1}}
+    },
+    "palette": {
+      "type": "object",
+      "required": ["dominant_ink", "secondary_ink", "accent", "accent_limit"],
+      "properties": {"accent_limit": {"const": 1}}
+    },
+    "segments": {"type": "array", "minItems": 1},
+    "shared_targets": {"type": "array", "contains": {"const": "video"}},
+    "publishing_authorized": {"const": false}
+  }
+}

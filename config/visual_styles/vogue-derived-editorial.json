@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "id": "vogue-derived-editorial",
+  "display_name": "Editorial fashion study (Vogue-derived)",
+  "status": "internal_originality_safe",
+  "selection": {
+    "brief_field": "visual_style_profile",
+    "opt_in_only": false,
+    "global_default": true,
+    "explicit_opt_out_supported": true
+  },
+  "abstract_principles": {
+    "composition": [
+      "Use decisive subject hierarchy and intentional negative space",
+      "Alternate sculptural portrait framing with environment-led wide frames",
+      "For groups, build readable geometric relationships rather than even spacing"
+    ],
+    "lighting": [
+      "Choose one legible lighting idea per scene",
+      "Use controlled contrast and shaped falloff to separate subject from environment",
+      "Preserve skin, fabric and product texture without flattening the image"
+    ],
+    "color": [
+      "Use a restrained dominant palette with one purposeful accent",
+      "Keep color continuity across adjacent segments",
+      "Allow monochrome only when form, expression and tonal separation carry the story"
+    ],
+    "pose_and_motion": [
+      "Direct poses through silhouette, gesture and tension rather than generic smiling",
+      "Give each moving shot one clear visual action and one narrative function"
+    ],
+    "environment_and_narrative": [
+      "Treat location, objects and wardrobe as story evidence",
+      "Build progression from intrigue through transformation to a resolved final image"
+    ],
+    "typography": [
+      "Use typography as an editorial composition element, not a generic subtitle layer",
+      "Prefer solid high-contrast display serif or disciplined solid sans-serif faces with a clear hierarchy",
+      "Use asymmetrical placement, intentional scale and generous negative space",
+      "Choose a restrained high-contrast ink color on light imagery or solid ivory on dark imagery; pure black is optional, not a default",
+      "Keep display copy short enough to remain legible at phone size",
+      "Create deliberate scale contrast between an oversized expressive display word and a small restrained editorial index",
+      "Allow italic tension, cropped letterforms and changing text axes when they reinforce the shot composition"
+    ]
+  },
+  "story_skeleton_contract": {
+    "applies_to_all_three_options": true,
+    "required_fields": ["editorial_visual_thesis", "composition_arc", "lighting_arc", "color_arc", "originality_notes"],
+    "rule": "Each of options A, B and C must interpret the principles differently while preserving evidence-based narrative beats."
+  },
+  "shot_selection_contract": [
+    "Every selected shot must declare narrative_function and visual_function",
+    "Prefer a purposeful mix of portrait, detail and environment evidence",
+    "Reject decorative shots that do not advance subject, transformation or resolution"
+  ],
+  "segment_contract": {
+    "required_fields": ["composition_intent", "lighting_intent", "color_intent", "typography_intent", "editorial_function", "originality_notes"],
+    "continuity_checks": ["subject hierarchy", "motion direction", "palette", "contrast", "wardrobe and object logic"]
+  },
+  "claude_review_contract": {
+    "checks": ["composition", "lighting", "color", "typography hierarchy and phone-size legibility", "pose or motion", "environmental storytelling", "cross-segment continuity", "originality"],
+    "blocking_originality_rule": "REVISE when the work appears to reproduce an identifiable reference image, publication layout, photographer signature, or campaign execution instead of applying abstract principles."
+  },
+  "originality_policy": {
+    "references_are_research_only": true,
+    "reference_images_may_be_generation_inputs": false,
+    "prohibit_identifiable_imitation": true,
+    "prohibited_prompt_terms": ["vogue", "vogue style", "in the style of", "shot by", "photographed by", "tim walker", "steven meisel", "annie leibovitz", "mario testino", "peter lindbergh"],
+    "prohibited_prompt_patterns": ["https?://", "vogue[-_ ]?\\d+", "reference[-_ ]?image"]
+  },
+  "typography_policy": {
+    "solid_fill_required": true,
+    "outline_or_hollow_display_type_prohibited": true,
+    "stroke_may_only_be_used_as_invisible_technical_antialiasing": true,
+    "generic_subtitle_styling_prohibited": true,
+    "preferred_display_categories": ["high-contrast serif", "restrained solid grotesk"],
+    "minimum_vertical_1080p_display_size_px": 64,
+    "recommended_alignment": ["left editorial axis", "intentional asymmetric offset"],
+    "contrast_pairs": ["deep ink blue on pale or white imagery", "solid ivory on dark imagery", "solid charcoal when the image requires neutrality"],
+    "color_strategy": {
+      "dominant_text_color": "derive one deep ink tone from the campaign palette",
+      "secondary_text_color": "use a quieter mineral or neutral relative of the dominant tone",
+      "accent_limit": "one purposeful accent color may appear once at the reveal or resolution",
+      "prohibited": ["arbitrary per-shot rainbow colors", "low-contrast decorative color", "pure black as an unquestioned universal default"]
+    },
+    "art_direction_required": ["expressive-versus-functional type scale contrast", "shot-specific placement", "at least one deliberate tension device such as italic, crop, offset or axis change"],
+    "avoid": ["same centered title treatment on every shot", "catalog-like uniform typography", "generic subtitle placement"]
+  },
+  "research_provenance": {
+    "sample_count": 500,
+    "playbook": "asset_library/reference/vogue_editorial_study/HARNESS-VISUAL-PLAYBOOK.md",
+    "usage": "internal study only; no publication or redistribution rights implied"
+  }
+}

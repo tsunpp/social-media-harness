@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "role": "deepseek_text_critic",
+  "purpose": "Attempt to falsify Codex conclusions using supplied textual evidence.",
+  "trigger_stages": ["narrative_selection", "final_master", "publication_package"],
+  "not_a_vote": true,
+  "excluded_authority": ["pixel_visible_fact", "visual_aesthetics", "motion", "pacing", "audio", "bgm", "mix_balance", "publication_authorization"],
+  "codex_dispositions": ["ACCEPT", "PARTIAL_ACCEPT", "REJECT", "HUMAN_REVIEW"],
+  "loop_guard": {"max_rounds": 3, "stop_without_new_evidence": true},
+  "publication_authorized": false
+}

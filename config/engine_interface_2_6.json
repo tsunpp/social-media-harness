@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "active_engine_api_version": "2.6",
+  "entrypoint": "engine_v2_6.py",
+  "python_module": "app.engine_api_v2_6.EngineV26",
+  "extends": "2.5",
+  "frozen_predecessor": "2.3",
+  "capability_change": "Adds persistent recipient/material/privacy authorization matrices, platform-specific delivery profiles including WeChat, immutable archive manifest schema v3, a hash-bound final contract/render/copy consistency gate, and an explicit audio-authority registry that never equates video input with validated listening authority. Publication remains owner-only."
+}
+

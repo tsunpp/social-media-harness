@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Human Decision",
+  "type": "object",
+  "required": ["decision", "accepted_comments", "rejected_comments", "reason", "decided_by", "decided_at"],
+  "properties": {
+    "decision": {"enum": ["approve", "approve_with_changes", "revise", "reject"]},
+    "accepted_comments": {"type": "array", "items": {"type": "string"}},
+    "rejected_comments": {"type": "array", "items": {"type": "string"}},
+    "reason": {"type": "string", "minLength": 1},
+    "decided_by": {"type": "string", "minLength": 1},
+    "decided_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false
+}
+

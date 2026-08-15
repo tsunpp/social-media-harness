@@ -1,0 +1,16 @@
+schema_version: 1
+slug: replace-me
+title: 待填写
+content_type: vertical_documentary_short
+objective: 用真实现场素材制作品牌纪实内容
+platforms:
+  - instagram
+  - youtube_shorts
+target_duration_seconds:
+  min: 15
+  max: 30
+aspect_ratio: "9:16"
+language: 待填写
+topic: 待填写
+human_notes: ""
+visual_style_profile: vogue-derived-editorial

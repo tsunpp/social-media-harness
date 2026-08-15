@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "routing_policy": {
+    "require_explicit_instance_id": true,
+    "allow_cross_instance_fallback": false,
+    "reason": "Instances may have different nodes, models, workflows, and trust boundaries."
+  },
+  "instances": {
+    "comfyui_aki": {
+      "label": "Optional audited custom distribution",
+      "distribution": "user_configured",
+      "installation": "${COMFYUI_AKI_PATH}",
+      "base_url": "http://127.0.0.1:8189",
+      "capability_registry": "config/comfyui_capabilities.json",
+      "status": "NOT_CONFIGURED",
+      "verified_capabilities": []
+    },
+    "comfyui_standard": {
+      "label": "Optional standard distribution",
+      "distribution": "user_configured",
+      "installation": "${COMFYUI_STANDARD_PATH}",
+      "base_url": "http://127.0.0.1:8188",
+      "capability_registry": null,
+      "status": "NOT_CONFIGURED",
+      "verified_capabilities": []
+    }
+  },
+  "capability_routes": {
+    "minimax_h3_i2v": "comfyui_aki"
+  }
+}

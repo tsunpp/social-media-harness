@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "decision_id": "standing-review-transfer-authorization-v2-5",
+  "status": "ACTIVE",
+  "authorized_by": "example_owner",
+  "scope": {
+    "project": "example-project",
+    "campaigns": "synthetic examples only",
+    "purpose": "model review and bounded re-review only"
+  },
+  "authorized_recipients": ["claude", "minimax", "kimi-k3"],
+  "materials_allowed": ["privacy-cleared derivatives", "rendered video", "sanitized dossier"],
+  "conditions": {
+    "privacy_preflight": "PASS",
+    "fact_preflight": "PASS",
+    "ordinary_paid_review_calls_allowed": false,
+    "bounded_automatic_re_review_allowed": false,
+    "per_transfer_owner_confirmation_required": false
+  },
+  "mandatory_exclusions": ["credentials", "identity documents", "private media", "publication"],
+  "publication_authorized": false
+}

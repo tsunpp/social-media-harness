@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Structured Content Review",
+  "type": "object",
+  "required": ["reviewer", "decision", "scores", "blocking_issues", "optional_suggestions"],
+  "properties": {
+    "reviewer": {"type": "string"},
+    "decision": {"enum": ["PASS", "REVISE", "HUMAN_REVIEW"]},
+    "scores": {
+      "type": "object",
+      "required": ["visual_quality", "authenticity", "brand_consistency", "platform_fit", "risk"],
+      "properties": {
+        "visual_quality": {"type": "integer", "minimum": 1, "maximum": 10},
+        "authenticity": {"type": "integer", "minimum": 1, "maximum": 10},
+        "brand_consistency": {"type": "integer", "minimum": 1, "maximum": 10},
+        "platform_fit": {"type": "integer", "minimum": 1, "maximum": 10},
+        "risk": {"type": "integer", "minimum": 1, "maximum": 10}
+      },
+      "additionalProperties": false
+    },
+    "blocking_issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "location", "problem", "required_change"],
+        "properties": {
+          "id": {"type": "string"},
+          "location": {"type": "string"},
+          "problem": {"type": "string"},
+          "required_change": {"type": "string"}
+        }
+      }
+    },
+    "optional_suggestions": {"type": "array", "items": {"type": "string"}},
+    "summary": {"type": "string"}
+  },
+  "additionalProperties": false
+}
+

@@ -1,0 +1,33 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Creative Plan Options",
+  "type": "object",
+  "required": ["schema_version", "campaign", "status", "shared_output", "options", "selection_required"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "campaign": {"type": "string", "minLength": 1},
+    "status": {"enum": ["awaiting_human_selection", "selected"]},
+    "shared_output": {"type": "object"},
+    "options": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "target_duration_seconds", "concept", "opening_hook", "timeline", "strength", "risk"],
+        "properties": {
+          "id": {"enum": ["A", "B", "C"]},
+          "name": {"type": "string"},
+          "target_duration_seconds": {"type": "number", "minimum": 15, "maximum": 30},
+          "concept": {"type": "string"},
+          "opening_hook": {"type": "object"},
+          "timeline": {"type": "array", "minItems": 4},
+          "strength": {"type": "string"},
+          "risk": {"type": "string"}
+        }
+      }
+    },
+    "selection_required": {"type": "object"}
+  }
+}
+

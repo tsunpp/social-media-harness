@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "archive_id": "SM0811202601",
+  "display_name": "Campaign display name",
+  "campaign": "campaign-slug",
+  "source_version": "final-version",
+  "language": "en",
+  "master_video": "campaigns/campaign-slug/drafts/final/master.mp4",
+  "render_manifest": "campaigns/campaign-slug/drafts/final/render-manifest.json",
+  "publishing_copy": "campaigns/campaign-slug/drafts/final/publishing-copy.json",
+  "covers": [
+    "campaigns/campaign-slug/drafts/final/publish-assets/cover-01.jpg"
+  ],
+  "final_review": "campaigns/campaign-slug/drafts/final/reviews/video-pipeline/review-aggregation.json",
+  "technical_gate": "campaigns/campaign-slug/drafts/final/reviews/technical-gate.json",
+  "publishing_authorized": false
+}

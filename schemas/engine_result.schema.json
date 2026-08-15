@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Social Media Harness Engine Result",
+  "type": "object",
+  "required": ["engine_api_version", "run_id", "command", "status", "ok", "data", "errors", "next_action"],
+  "properties": {
+    "engine_api_version": {"type": "string", "enum": ["1.0", "1.1"]},
+    "run_id": {"type": "string", "minLength": 1},
+    "command": {"type": "string", "minLength": 1},
+    "status": {"type": "string", "minLength": 1},
+    "ok": {"type": "boolean"},
+    "data": {"type": "object"},
+    "errors": {"type": "array"},
+    "next_action": {"type": ["string", "null"]}
+  },
+  "additionalProperties": false
+}
+

@@ -1,0 +1,22 @@
+{
+  "reviewer": "visual-reviewer",
+  "decision": "REVISE",
+  "scores": {
+    "visual_quality": 7,
+    "authenticity": 9,
+    "brand_consistency": 7,
+    "platform_fit": 8,
+    "risk": 3
+  },
+  "blocking_issues": [
+    {
+      "id": "V-001",
+      "location": "00:07-00:10",
+      "problem": "背景标签可能暴露敏感信息",
+      "required_change": "模糊标签或替换镜头"
+    }
+  ],
+  "optional_suggestions": ["前两秒可以使用更明确的动作镜头"],
+  "summary": "真实感良好，处理一个隐私问题后可再次评审。"
+}
+
