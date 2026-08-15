@@ -9,19 +9,19 @@ Engine API 1.4, entrypoint `engine_v1_4.py`.
 Prepare the complete campaign context for Codex planning:
 
 ```powershell
-python engine_v1_4.py plan-prepare --project cannabis-social-media --campaign diamond-documentary
+python engine_v1_4.py plan-prepare --project synthetic-social-project --campaign sample-documentary
 ```
 
 Prepare and validate a three-option plan without paid API calls:
 
 ```powershell
-python engine_v1_4.py plan-review --project cannabis-social-media --campaign diamond-documentary --plan campaigns/diamond-documentary/plans/plan_options_mother_liquor_v2.json
+python engine_v1_4.py plan-review --project synthetic-social-project --campaign sample-documentary --plan campaigns/sample-documentary/plans/plan_options_process_liquid_v2.json
 ```
 
 Run the paid Claude and MiniMax planning review only after authorization:
 
 ```powershell
-python engine_v1_4.py plan-review --project cannabis-social-media --campaign diamond-documentary --plan campaigns/diamond-documentary/plans/plan_options_mother_liquor_v2.json --run-apis
+python engine_v1_4.py plan-review --project synthetic-social-project --campaign sample-documentary --plan campaigns/sample-documentary/plans/plan_options_process_liquid_v2.json --run-apis
 ```
 
 ## Evidence contract
@@ -35,5 +35,5 @@ python engine_v1_4.py plan-review --project cannabis-social-media --campaign dia
 
 Active owner-confirmed fact rules run before any external API call. Superseded wording returns `FACT_CONFLICT`, records zero API calls and tells Codex to correct facts without changing creative direction.
 
-The historical Diamond plan remains unchanged. The current review candidate is `plan_options_mother_liquor_v2.json`, with six factual wording changes recorded separately.
+Historical plans remain immutable. The current synthetic review candidate is `plan_options_process_liquid_v2.json`, with six factual wording changes recorded separately.
 

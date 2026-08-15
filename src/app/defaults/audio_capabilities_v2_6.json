@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "engine_api_version": "2.6",
+  "providers": {
+    "claude": {
+      "validated_authorities": ["visual_audio_competition_from_timeline", "spectrogram_structure"],
+      "evidence": ["User-specific validation record required; not distributed"]
+    },
+    "minimax": {
+      "validated_authorities": ["video_motion", "temporal_continuity"],
+      "evidence": [],
+      "note": "Video input does not prove complete-audio understanding."
+    },
+    "kimi-k3": {
+      "validated_authorities": ["audio_provenance", "story_contract_alignment"],
+      "evidence": ["User-specific validation record required; not distributed"]
+    },
+    "owner": {
+      "validated_authorities": ["bgm_quality", "mix_balance", "musical_pacing", "final_listening_approval"],
+      "evidence": ["explicit persisted owner decision"]
+    }
+  }
+}
