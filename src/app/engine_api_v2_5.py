@@ -89,7 +89,7 @@ class EngineV25(EngineV23):
         }
         result.data["capabilities"]["standing_review_transfer_authorization"] = {
             "implemented": True,
-            "scope": "cannabis-social-media Campaign review only",
+            "scope": "Explicitly selected project and campaign review only",
             "recipients": ["claude", "minimax", "kimi-k3"],
             "privacy_and_fact_preflight_required": True,
             "per_transfer_owner_confirmation_required": False,

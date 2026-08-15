@@ -34,7 +34,7 @@ def parser():
     typography.add_argument("--evidence-image", action="append", type=Path, required=True)
     typography.add_argument("--output", type=Path)
     transfer = commands.add_parser("review-transfer-authorize")
-    transfer.add_argument("--project", default="cannabis-social-media")
+    transfer.add_argument("--project", required=True)
     transfer.add_argument("--campaign", required=True)
     transfer.add_argument("--recipient", action="append", dest="recipients", required=True, choices=["claude", "minimax", "kimi-k3"])
     transfer.add_argument("--material", action="append", dest="materials", required=True)

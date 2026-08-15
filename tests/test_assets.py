@@ -40,7 +40,7 @@ class AssetTests(unittest.TestCase):
 
     def test_hash_is_stable(self):
         path = self.root / "sample.bin"
-        path.write_bytes(b"diamond")
+        path.write_bytes(b"synthetic-sample")
         self.assertEqual(sha256_file(path), sha256_file(path))
 
     def test_jpeg_catalog_and_thumbnail(self):

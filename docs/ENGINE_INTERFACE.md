@@ -25,7 +25,7 @@ python engine.py campaign start --slug second-campaign --title "Second Campaign"
 python engine.py campaign status --slug second-campaign
 python engine.py campaign history --slug second-campaign
 python engine.py campaign advance --slug second-campaign --to INGESTED --actor codex --note "assets ready"
-python engine.py review-video --campaign diamond-documentary --version v5-en-sdr
+python engine.py review-video --campaign sample-documentary --version v1-en-sdr
 ```
 
 `review-video --run-apis` performs paid Claude and MiniMax calls and must only be invoked when authorized by the active workflow.

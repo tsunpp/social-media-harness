@@ -7,20 +7,20 @@ from app.planning_preflight import find_plan_fact_conflicts
 
 class PlanningFactPreflightTests(unittest.TestCase):
     def test_superseded_phrase_is_blocked(self):
-        plan = {"options": [{"concept": "黄色托盘中的晶体"}]}
+        plan = {"options": [{"concept": "蓝色容器中的样品"}]}
         rules = [{
-            "decision_id": "mother-liquor",
-            "forbidden_phrases": ["黄色托盘"],
-            "required_fact": "黄色部分是母液",
-            "preferred_terms": ["黄色母液"],
+            "decision_id": "sample-container",
+            "forbidden_phrases": ["蓝色容器"],
+            "required_fact": "样品位于透明容器中",
+            "preferred_terms": ["透明容器"],
         }]
         conflicts = find_plan_fact_conflicts(plan, rules)
         self.assertEqual(conflicts[0]["occurrences"], 1)
-        self.assertEqual(conflicts[0]["decision_id"], "mother-liquor")
+        self.assertEqual(conflicts[0]["decision_id"], "sample-container")
 
     def test_current_wording_passes(self):
-        plan = {"options": [{"concept": "母液中的DIAMOND"}]}
-        rules = [{"decision_id": "mother-liquor", "forbidden_phrases": ["黄色托盘"]}]
+        plan = {"options": [{"concept": "透明容器中的样品"}]}
+        rules = [{"decision_id": "sample-container", "forbidden_phrases": ["蓝色容器"]}]
         self.assertEqual(find_plan_fact_conflicts(plan, rules), [])
 
 

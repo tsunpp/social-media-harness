@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "engine_api_version": "2.6",
+  "platforms": {
+    "wechat_channels": {
+      "allowed_resolutions": ["720x1280", "1080x1920"],
+      "duration_seconds": {"min": 3, "max": 60},
+      "package_requirements": ["master", "cover", "caption"],
+      "caption_style": "warm_concise_chinese",
+      "subtitle_safe_area": "vertical_mobile",
+      "caption_background": "transparent_no_black_or_dark_backing_unless_owner_explicitly_requests"
+    },
+    "instagram_reels": {
+      "allowed_resolutions": ["1080x1920"],
+      "duration_seconds": {"min": 3, "max": 90},
+      "package_requirements": ["master", "cover", "caption", "alt_text"],
+      "caption_style": "platform_caption_hashtags",
+      "subtitle_safe_area": "reels_ui",
+      "caption_background": "transparent_no_black_or_dark_backing_unless_owner_explicitly_requests"
+    },
+    "tiktok": {
+      "allowed_resolutions": ["1080x1920"],
+      "duration_seconds": {"min": 3, "max": 180},
+      "package_requirements": ["master", "cover", "caption"],
+      "caption_style": "short_hook_hashtags",
+      "subtitle_safe_area": "tiktok_ui",
+      "caption_background": "transparent_no_black_or_dark_backing_unless_owner_explicitly_requests"
+    },
+    "youtube_shorts": {
+      "allowed_resolutions": ["1080x1920"],
+      "duration_seconds": {"min": 3, "max": 180},
+      "package_requirements": ["master", "cover", "title", "description"],
+      "caption_style": "title_description_tags",
+      "subtitle_safe_area": "shorts_ui",
+      "caption_background": "transparent_no_black_or_dark_backing_unless_owner_explicitly_requests"
+    }
+  }
+}
