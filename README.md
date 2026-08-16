@@ -30,6 +30,18 @@ Install FFmpeg separately and ensure it is on `PATH`, or set `SMH_FFMPEG` to its
 
 Do not place real campaigns, source media, review uploads, credentials, publication accounts, or persistent owner memory in this repository. The `.gitignore` blocks the standard private directories, but users remain responsible for reviewing staged changes.
 
+## Campaign governance before production
+
+Engine 2.6 separates client previews, internal archives, and publication candidates before Narrative-First planning. Validate a hash-bound governance contract with:
+
+```powershell
+python engine_v2_6.py campaign-governance-validate --contract campaign-governance.json
+```
+
+The contract locks delivery intent, messaging mode, brand-mark display and alteration rights, the replacement logo asset, shot-level VFX feasibility, and the owner-confirmed Direction Contract. `PROCESS_DOCUMENTARY` forbids solicitation, calls to action, contact details, and sales language. A publication candidate cannot retain a customer mark without public-display rights or a validated replacement route.
+
+Stage 5 keeps package approval, archive-without-publication, and publication authorization separate. Archiving never grants permission to publish.
+
 See [Public readiness](docs/PUBLIC_READINESS.md), [Architecture](docs/ARCHITECTURE.md), and [Security](SECURITY.md).
 
 ## Status

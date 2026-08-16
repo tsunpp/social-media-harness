@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Social Media Harness Campaign Governance 2.6",
+  "type": "object",
+  "required": ["delivery_intent", "messaging", "brand_marks", "direction_contract"],
+  "properties": {
+    "delivery_intent": {"enum": ["CLIENT_PREVIEW", "INTERNAL_ARCHIVE", "PUBLICATION_CANDIDATE"]},
+    "messaging": {
+      "type": "object",
+      "required": ["mode", "commercial_solicitation", "cta", "contact_information", "sales_language"],
+      "properties": {
+        "mode": {"enum": ["PROCESS_DOCUMENTARY", "SERVICE_EDITORIAL", "PRODUCT_EDITORIAL"]},
+        "commercial_solicitation": {"type": "boolean"},
+        "cta": {"type": "string"},
+        "contact_information": {"type": "boolean"},
+        "sales_language": {"type": "boolean"}
+      }
+    },
+    "brand_marks": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+    "logo_replacement_preflight": {"type": "object"},
+    "direction_contract": {"type": "object"}
+  }
+}

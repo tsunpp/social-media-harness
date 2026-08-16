@@ -9,7 +9,8 @@
   "commands": {
     "recover_scoped": "engine_v2_6.py recover --project <project> --campaign <campaign>",
     "four_agent_prepare": "engine_v2_6.py four-agent-review --spec <spec.json>",
-    "four_agent_run_or_resume": "engine_v2_6.py four-agent-review --spec <spec.json> --run-apis"
+    "four_agent_run_or_resume": "engine_v2_6.py four-agent-review --spec <spec.json> --run-apis",
+    "campaign_governance_validate": "engine_v2_6.py campaign-governance-validate --contract <campaign-governance.json>",
+    "stage5_owner_decision": "engine_v2_6.py stage5-owner-decision --decision <decision.json> --receipt-sha256 <sha256>"
   }
 }
-

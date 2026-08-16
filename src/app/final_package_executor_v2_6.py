@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from app.archive_manifest_v2_6 import validate_archive_manifest
+from app.campaign_governance_v2_6 import validate_campaign_governance
 from app.contract_consistency_v2_6 import validate_final_contract
 from app.final_package_executor import validate_archive_id
 from app.image_review_orchestrator import sha256
@@ -37,6 +38,11 @@ def _paths(root: Path, spec: dict[str, Any]) -> dict[str, Path]:
 
 def prepare_final_package_v2_6(root: Path, spec_path: Path) -> dict[str, Any]:
     spec = read_json(_resolve(root, spec_path)); paths = _paths(root, spec)
+    if spec.get("campaign_governance"):
+        governance_path = _resolve(root, spec["campaign_governance"])
+        governance = validate_campaign_governance(read_json(governance_path))
+        if governance["delivery_intent"] != "PUBLICATION_CANDIDATE":
+            raise ValueError("Platform publication packages require delivery_intent=PUBLICATION_CANDIDATE")
     render = read_json(paths["render_manifest"]); output = render.get("output", {})
     package = {"master": str(paths["master_video"]), "cover": str(paths["cover"]), **read_json(paths["publishing_copy"])}
     platform_result = validate_platform_output(root, spec["platform"], output, package)
@@ -105,4 +111,3 @@ def verify_final_package_v2_6(root: Path, archive_id: str) -> dict[str, Any]:
     result = validate_archive_manifest(archive, read_json(archive / "manifest.json"))
     result["status"] = "PASS"
     return result
-

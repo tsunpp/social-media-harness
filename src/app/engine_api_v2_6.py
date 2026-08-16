@@ -5,12 +5,14 @@ from pathlib import Path
 from app.archive_manifest_v2_6 import validate_archive_manifest
 from app.audio_capability_v2_6 import resolve_audio_authority
 from app.authorization_matrix_v2_6 import resolve_authorization
+from app.campaign_governance_v2_6 import validate_campaign_governance
 from app.contract_consistency_v2_6 import validate_final_contract
 from app.engine_api_v2_5 import EngineV25
 from app.planning_orchestrator import read_json
 from app.platform_profiles_v2_6 import load_profiles, validate_platform_output
 from app.final_package_executor_v2_6 import build_final_package_v2_6, prepare_final_package_v2_6, verify_final_package_v2_6
 from app.review_pipeline_v2_6 import prepare_complete_evidence, run_resumable_panel
+from app.publication_authority_v2_6 import resolve_stage5_owner_decision
 from app.head_discovery import current_head
 
 
@@ -48,6 +50,8 @@ class EngineV26(EngineV25):
             "provider_sized_video_proxy": True,
             "per_reviewer_resume": True,
         }
+        capabilities["campaign_governance"] = {"implemented": True, "delivery_intents": ["CLIENT_PREVIEW", "INTERNAL_ARCHIVE", "PUBLICATION_CANDIDATE"], "logo_rights_contract": True, "process_documentary_mode": True, "logo_replacement_preflight": True}
+        capabilities["stage5_authority_split"] = {"implemented": True, "states": ["PACKAGE_APPROVED_NOT_PUBLISHED", "ARCHIVED_NOT_PUBLISHED", "PUBLICATION_AUTHORIZED"]}
         capabilities.setdefault("finalize", {}).update({
             "platforms": sorted(load_profiles(self.root)["platforms"]),
             "archive_manifest_schema": 3,
@@ -79,6 +83,20 @@ class EngineV26(EngineV25):
                                   privacy_preflight=privacy_preflight),
             status="AUTHORIZED_FOR_SCOPED_REVIEW_TRANSFER",
             next_action="prepare_sanitized_reviewer_evidence",
+        )))
+
+    def campaign_governance_validate(self, contract: Path):
+        command = "campaign-governance.validate"
+        return self._stamp(self._guard(command, lambda: self._success(
+            command, validate_campaign_governance(read_json(contract if contract.is_absolute() else self.root / contract)),
+            status="CAMPAIGN_GOVERNANCE_LOCKED", next_action="narrative-plan-prepare",
+        )))
+
+    def stage5_owner_decision(self, decision: Path, receipt_sha256: str):
+        command = "stage5-owner-decision.resolve"
+        return self._stamp(self._guard(command, lambda: self._success(
+            command, resolve_stage5_owner_decision(read_json(decision if decision.is_absolute() else self.root / decision), receipt_sha256),
+            status="STAGE5_AUTHORITY_RESOLVED", next_action="follow_resolved_next_action",
         )))
 
     def platform_validate(self, platform, output, package):

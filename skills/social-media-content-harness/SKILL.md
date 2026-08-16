@@ -29,6 +29,8 @@ Read [architecture.md](references/architecture.md) when selecting project, Campa
 
 ## Enforce Narrative-First planning
 
+Before planning, validate a Campaign Governance Contract that declares `CLIENT_PREVIEW`, `INTERNAL_ARCHIVE`, or `PUBLICATION_CANDIDATE`; locks messaging mode; records display and alteration rights for every visible brand mark; and, when replacement is requested, binds a transparent logo asset and shot-level VFX preflight. `PROCESS_DOCUMENTARY` forbids solicitation, calls to action, contact details, and sales language.
+
 Before ranking shots, create exactly three evidence-testable micro-story skeletons. Require each to define the audience question, middle change or discovery, visual climax, ending insight, story-advancing text progression, authentic source feasibility, five narrative beats, and verified asset IDs for every beat.
 
 Reject an attractive montage without progression. Reject label-only copy. If a required documentary beat is missing, revise the story or request new capture; never silently generate the missing factual event.
@@ -73,6 +75,7 @@ After synchronized Engine 2.6 panel clearance and a passing hash-bound final-con
 - retain the owner publication gate;
 - archive with `SMmmddyyyyNN` naming and archive manifest schema v3 without overwriting an existing package;
 - update persistent memory and the next action.
+- Keep package approval, archive authorization, and publication authorization as separate owner decisions. `ARCHIVE_NO_PUBLISH` must never set publication authority.
 
 ## Validate integrity
 

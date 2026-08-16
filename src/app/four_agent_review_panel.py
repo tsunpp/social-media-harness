@@ -3,6 +3,8 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
+from app.review_governance_v2_6 import finding_signature, govern_finding
+
 
 REVIEWER_AUTHORITY = {
     "claude": {
@@ -52,14 +54,30 @@ def validate_panel_review(reviewer: str, review: dict[str, Any]) -> None:
             raise ValueError("Invalid finding severity")
 
 
-def classify_findings(reviewer: str, review: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
+def classify_findings(reviewer: str, review: dict[str, Any], stage: str = "stage_4", owner_resolutions: list[dict[str, Any]] | None = None) -> dict[str, list[dict[str, Any]]]:
     authority = REVIEWER_AUTHORITY[reviewer]
     classified = {"binding": [], "advisory": [], "owner_only": []}
     for finding in review["findings"]:
-        item = {"reviewer": reviewer, **finding}
+        # Owner-only authority is a hard boundary. Classify it before
+        # temporal routing so publication decisions cannot be deferred.
         if finding["domain"] in OWNER_ONLY:
+            item = {
+                "reviewer": reviewer,
+                **finding,
+                "signature": finding_signature({"reviewer": reviewer, **finding}),
+                "binding": True,
+                "classification": "OWNER_ONLY",
+            }
             classified["owner_only"].append(item)
-        elif finding["domain"] in authority:
+            continue
+        item = govern_finding(reviewer, finding, stage, authority, owner_resolutions)
+        if item["classification"] == "RESOLVED_BY_OWNER":
+            classified["advisory"].append(item)
+            continue
+        if item["classification"] == "DEFERRED_TO_CORRECT_STAGE":
+            classified["advisory"].append(item)
+            continue
+        if finding["domain"] in authority:
             classified["binding"].append(item)
         else:
             item["classification_reason"] = "outside_reviewer_validated_authority"
@@ -74,6 +92,8 @@ def aggregate_panel(
     revision_count: int = 0,
     auto_revision_limit: int = 8,
     no_improvement_streak: int = 0,
+    stage: str = "stage_4",
+    owner_resolutions: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     if not 1 <= auto_revision_limit <= 10:
         raise ValueError("auto_revision_limit must be between 1 and 10")
@@ -81,13 +101,13 @@ def aggregate_panel(
     classified = {}
     for reviewer, review in reviews.items():
         validate_panel_review(reviewer, review)
-        classified[reviewer] = classify_findings(reviewer, review)
+        classified[reviewer] = classify_findings(reviewer, review, stage, owner_resolutions)
 
     binding = [item for value in classified.values() for item in value["binding"]]
     advisory = [item for value in classified.values() for item in value["advisory"]]
     owner_only = [item for value in classified.values() for item in value["owner_only"]]
     binding_blockers = [item for item in binding if item["severity"] == "blocking"]
-    explicit_human = [name for name, review in reviews.items() if review["decision"] == "HUMAN_REVIEW"]
+    explicit_human = [name for name, review in reviews.items() if review["decision"] == "HUMAN_REVIEW" and any(item["reviewer"] == name and item["severity"] == "blocking" for item in binding)]
 
     if owner_only or explicit_human:
         next_action, reason = "HUMAN_DECISION", "owner_only_or_explicit_human_issue"
@@ -119,6 +139,7 @@ def aggregate_panel(
             "must_escalate": sorted(OWNER_ONLY),
         },
         "publication_authorized": False,
+        "stage": stage,
     }
 
 

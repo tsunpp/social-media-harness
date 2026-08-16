@@ -30,6 +30,10 @@ def parser():
     panel = commands.add_parser("four-agent-review")
     panel.add_argument("--spec", type=Path, required=True)
     panel.add_argument("--run-apis", action="store_true")
+    governance = commands.add_parser("campaign-governance-validate")
+    governance.add_argument("--contract", type=Path, required=True)
+    stage5 = commands.add_parser("stage5-owner-decision")
+    stage5.add_argument("--decision", type=Path, required=True); stage5.add_argument("--receipt-sha256", required=True)
     return root
 
 
@@ -45,6 +49,8 @@ def execute(args):
     if args.command == "audio-authority": return engine.audio_authority(args.provider, args.capability)
     if args.command == "archive-manifest-validate": return engine.archive_manifest_validate(args.archive)
     if args.command == "four-agent-review": return engine.four_agent_review(args.spec, args.run_apis)
+    if args.command == "campaign-governance-validate": return engine.campaign_governance_validate(args.contract)
+    if args.command == "stage5-owner-decision": return engine.stage5_owner_decision(args.decision, args.receipt_sha256)
     from app.engine_cli_v2_5 import execute as old_execute
     result = old_execute(args); result.engine_api_version = "2.6"; return result
 
@@ -53,4 +59,3 @@ def main(argv=None):
     result = execute(parser().parse_args(argv))
     print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2))
     return 0 if result.ok else 3
-

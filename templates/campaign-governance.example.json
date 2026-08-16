@@ -1,0 +1,28 @@
+{
+  "delivery_intent": "PUBLICATION_CANDIDATE",
+  "messaging": {
+    "mode": "PROCESS_DOCUMENTARY",
+    "commercial_solicitation": false,
+    "cta": "NONE",
+    "contact_information": false,
+    "sales_language": false
+  },
+  "brand_marks": [
+    {
+      "mark_id": "customer-logo",
+      "owner": "customer",
+      "internal_display_allowed": true,
+      "public_display_allowed": false,
+      "alteration_allowed": true,
+      "replacement_requested": true,
+      "replacement_asset": {"format": "SVG", "transparent_background": true, "sha256": "replace-with-real-hash"}
+    }
+  ],
+  "logo_replacement_preflight": {
+    "status": "PASS",
+    "shots": [
+      {"shot_id": "S01", "mark_id": "customer-logo", "surface": "curved", "camera_motion": true, "occlusion": true, "reflection": true, "uv_light": true, "route": "MASK_AND_TRACK"}
+    ]
+  },
+  "direction_contract": {"status": "OWNER_CONFIRMED", "unresolved_owner_decisions": [], "contract_sha256": "replace-with-real-hash"}
+}

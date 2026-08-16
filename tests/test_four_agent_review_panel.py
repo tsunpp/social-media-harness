@@ -55,6 +55,19 @@ class FourAgentPanelTests(unittest.TestCase):
         result = aggregate_panel(review("claude", "REVISE", [finding]), review("minimax"), review("kimi"), no_improvement_streak=2)
         self.assertEqual(result["next_action"], "HUMAN_DECISION")
 
+    def test_stage5_caption_finding_cannot_block_stage4_as_temporal_continuity(self):
+        finding = {"id":"m2","domain":"temporal_continuity","severity":"blocking","problem":"caption file and platform package are missing","required_change":"add SRT before publishing"}
+        result = aggregate_panel(review("claude"), review("minimax", "REVISE", [finding]), review("kimi"), stage="stage_4")
+        self.assertEqual(result["next_action"], "FINAL_CANDIDATE")
+        self.assertEqual(result["advisory_findings"][0]["target_stage"], "stage_5")
+
+    def test_owner_resolution_prevents_repeated_human_loop(self):
+        finding = {"id":"c2","domain":"visible_facts","severity":"blocking","problem":"logo visibility needs owner confirmation","required_change":"owner confirms"}
+        from app.review_governance_v2_6 import finding_signature
+        signature = finding_signature({"reviewer":"claude", **finding})
+        result = aggregate_panel(review("claude", "HUMAN_REVIEW", [finding]), review("minimax"), review("kimi"), owner_resolutions=[{"resolution_id":"R1","status":"RESOLVED","finding_signatures":[signature]}])
+        self.assertEqual(result["next_action"], "FINAL_CANDIDATE")
+
     def test_engine_declares_bounded_panel(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
