@@ -11,6 +11,9 @@ from app.engine_cli_v2_5 import parser as parser_v2_5
 def parser():
     root = parser_v2_5()
     commands = next(x for x in root._actions if isinstance(x, argparse._SubParsersAction))
+    recover = commands.choices["recover"]
+    recover.add_argument("--project")
+    recover.add_argument("--campaign")
     auth = commands.add_parser("authorization-resolve")
     auth.add_argument("--project", required=True); auth.add_argument("--campaign", required=True)
     auth.add_argument("--recipient", required=True); auth.add_argument("--material", action="append", dest="materials", required=True)
@@ -24,12 +27,16 @@ def parser():
     audio.add_argument("--provider", required=True); audio.add_argument("--capability", required=True)
     archive = commands.add_parser("archive-manifest-validate")
     archive.add_argument("--archive", type=Path, required=True)
+    panel = commands.add_parser("four-agent-review")
+    panel.add_argument("--spec", type=Path, required=True)
+    panel.add_argument("--run-apis", action="store_true")
     return root
 
 
 def execute(args):
     engine = EngineV26(args.root, args.db)
     if args.command == "capabilities": return engine.capabilities()
+    if args.command == "recover": return engine.recover(project=args.project, campaign=args.campaign)
     if args.command == "authorization-resolve":
         return engine.authorization_resolve(args.project, args.campaign, args.recipient, args.materials, args.identifiable_people, args.metadata_stripped, args.privacy_preflight)
     if args.command == "platform-validate":
@@ -37,6 +44,7 @@ def execute(args):
     if args.command == "contract-consistency": return engine.contract_consistency(args.spec)
     if args.command == "audio-authority": return engine.audio_authority(args.provider, args.capability)
     if args.command == "archive-manifest-validate": return engine.archive_manifest_validate(args.archive)
+    if args.command == "four-agent-review": return engine.four_agent_review(args.spec, args.run_apis)
     from app.engine_cli_v2_5 import execute as old_execute
     result = old_execute(args); result.engine_api_version = "2.6"; return result
 

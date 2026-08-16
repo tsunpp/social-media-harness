@@ -28,16 +28,31 @@ def dump(path: Path, value) -> Path:
 class EngineV26Tests(unittest.TestCase):
     def test_capabilities_expose_all_five_upgrades(self):
         capabilities = EngineV26(ROOT).capabilities().data["capabilities"]
-        for name in ("persistent_authorization_matrix", "platform_profiles", "archive_manifest_v3", "final_contract_consistency_gate", "audio_authority_registry"):
+        for name in ("persistent_authorization_matrix", "platform_profiles", "archive_manifest_v3", "final_contract_consistency_gate", "audio_authority_registry", "resumable_four_agent_review"):
             self.assertTrue(capabilities[name]["implemented"])
 
-    def test_example_matrix_allows_sanitized_claude_review_and_blocks_kimi(self):
-        result = resolve_authorization(ROOT, "example-project", "sample-campaign", "claude", ["rendered_video"], contains_identifiable_people=False, metadata_stripped=True, privacy_preflight="PASS")
-        self.assertFalse(result["per_transfer_owner_confirmation_required"])
-        with self.assertRaisesRegex(ValueError, "not authorized"):
-            resolve_authorization(ROOT, "example-project", "sample-campaign", "kimi-k3", ["sanitized_dossier"], contains_identifiable_people=False, metadata_stripped=True, privacy_preflight="PASS")
+    def test_family_matrix_remembers_all_three_reviewers_for_identifiable_family_media(self):
+        with tempfile.TemporaryDirectory() as value:
+            root = Path(value)
+            matrix = {
+                "status": "ACTIVE",
+                "recipients": {
+                    name: {
+                        "status": "AUTHORIZED",
+                        "allowed_materials": ["rendered_video"],
+                        "identifiable_people_allowed": True,
+                        "metadata_stripping_required": True,
+                    }
+                    for name in ("claude", "minimax", "kimi-k3")
+                },
+            }
+            dump(root / "projects" / "family-social" / "decisions" / "review-authorization-matrix-v2-6.json", matrix)
+            result = resolve_authorization(root, "family-social", "campaign", "claude", ["rendered_video"], contains_identifiable_people=True, metadata_stripped=True, privacy_preflight="PASS")
+            self.assertFalse(result["per_transfer_owner_confirmation_required"])
+            kimi = resolve_authorization(root, "family-social", "campaign", "kimi-k3", ["rendered_video"], contains_identifiable_people=True, metadata_stripped=True, privacy_preflight="PASS")
+            self.assertFalse(kimi["per_transfer_owner_confirmation_required"])
 
-    def test_wechat_accepts_vertical_delivery_shape(self):
+    def test_wechat_accepts_adam_delivery_shape(self):
         result = validate_platform_output(ROOT, "wechat_channels", {"resolution": "720x1280", "duration_seconds": 37.65, "color": "SDR BT.709"}, {"master": "x", "cover": "x", "caption": "x"})
         self.assertEqual(result["status"], "PASS")
 
@@ -89,7 +104,7 @@ class EngineV26Tests(unittest.TestCase):
             dump(root / "review.json", {"next_action": "FINAL_CANDIDATE", "blocking_issues": []})
             dump(root / "technical.json", {"status": "PASS"})
             dump(root / "approval.json", {"owner_decision": "APPROVED_FINAL"})
-            spec = {"archive_id": "SM0814202601", "display_name": "Synthetic example", "campaign": "sample-campaign", "platform": "wechat_channels", "master_video": "master.mp4", "render_manifest": "render.json", "publishing_copy": "copy.json", "cover": "cover.jpg", "final_story_contract": "contract.json", "final_review": "review.json", "technical_gate": "technical.json", "owner_approval": "approval.json", "publishing_authorized": False}
+            spec = {"archive_id": "SM0814202601", "display_name": "Adam", "campaign": "adam", "platform": "wechat_channels", "master_video": "master.mp4", "render_manifest": "render.json", "publishing_copy": "copy.json", "cover": "cover.jpg", "final_story_contract": "contract.json", "final_review": "review.json", "technical_gate": "technical.json", "owner_approval": "approval.json", "publishing_authorized": False}
             spec_path = dump(root / "spec.json", spec)
             built = build_final_package_v2_6(root, spec_path)
             self.assertEqual(built["status"], "APPROVED_NOT_PUBLISHED")

@@ -5,6 +5,11 @@
   "python_module": "app.engine_api_v2_6.EngineV26",
   "extends": "2.5",
   "frozen_predecessor": "2.3",
-  "capability_change": "Adds persistent recipient/material/privacy authorization matrices, platform-specific delivery profiles including WeChat, immutable archive manifest schema v3, a hash-bound final contract/render/copy consistency gate, and an explicit audio-authority registry that never equates video input with validated listening authority. Publication remains owner-only."
+  "capability_change": "Adds persistent recipient/material/privacy authorization matrices, project-and-Campaign-scoped recovery across legacy chains and self-contained snapshots, platform-specific delivery profiles, immutable archive manifest schema v3, a hash-bound final contract/render/copy consistency gate, an explicit audio-authority registry, and a resumable four-agent review command that automatically assembles complete evidence, runs Claude/MiniMax/Kimi, creates provider-sized complete-video proxies, persists each reviewer independently, and binds panel clearance to master and evidence hashes. Publication remains owner-only.",
+  "commands": {
+    "recover_scoped": "engine_v2_6.py recover --project <project> --campaign <campaign>",
+    "four_agent_prepare": "engine_v2_6.py four-agent-review --spec <spec.json>",
+    "four_agent_run_or_resume": "engine_v2_6.py four-agent-review --spec <spec.json> --run-apis"
+  }
 }
 

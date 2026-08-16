@@ -1,10 +1,27 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 
-def current_head(root: Path) -> Path:
+def _record_time(path: Path, record: dict) -> float:
+    for key in ("updated_at", "created_at", "date"):
+        value = record.get(key)
+        if not value:
+            continue
+        try:
+            normalized = str(value).replace("Z", "+00:00")
+            parsed = datetime.fromisoformat(normalized)
+            if parsed.tzinfo is None:
+                parsed = parsed.replace(tzinfo=timezone.utc)
+            return parsed.timestamp()
+        except ValueError:
+            pass
+    return path.stat().st_mtime
+
+
+def current_head(root: Path, project: str | None = None, campaign: str | None = None) -> Path:
     paths = sorted((root / "memory").glob("HEAD*.json"))
     if not paths:
         raise FileNotFoundError("No memory/HEAD*.json exists")
@@ -29,7 +46,18 @@ def current_head(root: Path) -> Path:
     referenced = {record.get("previous_head") for record in records.values() if record.get("previous_head")}
     leaves = [name for name in records if name not in referenced]
     candidates = leaves or list(records)
-    winner = max(candidates, key=lambda name: (depth(name), records[name].get("updated_at", ""), name))
+    if project:
+        scoped = [name for name in candidates if records[name].get("project") == project]
+        candidates = scoped or candidates
+    if campaign:
+        scoped = [name for name in candidates if records[name].get("campaign") == campaign]
+        candidates = scoped or candidates
+    # Independent Campaign HEAD chains are normal. Freshness must outrank the
+    # depth of an unrelated historical chain; depth only breaks equal times.
+    winner = max(
+        candidates,
+        key=lambda name: (_record_time(root / name, records[name]), depth(name), name),
+    )
     return root / winner
 
 

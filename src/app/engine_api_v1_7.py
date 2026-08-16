@@ -57,7 +57,21 @@ class EngineV17(EngineV16):
                     if item not in superseded: superseded.append(item)
                 next_action = record.get("next_action", record.get("next_stage_after_owner_acceptance", next_action))
             if not base_state or not stage_summary:
-                raise KeyError("HEAD chain must resolve base_state and current_stage_summary")
+                # Newer Campaign-scoped HEAD records are self-contained state
+                # snapshots rather than pointers into the legacy account chain.
+                # Recover them truthfully instead of falling back to an older,
+                # deeper but unrelated chain.
+                latest = chain[-1][1]
+                relative_head = str(head_path.relative_to(self.root)).replace("\\", "/")
+                return self._success(command, {
+                    "head": relative_head,
+                    "head_chain": [str(path.relative_to(self.root)).replace("\\", "/") for path, _ in chain],
+                    "state_snapshot": latest,
+                    "project": latest.get("project"),
+                    "campaign": latest.get("campaign"),
+                    "reference_count": 1,
+                    "recovery_mode": "CAMPAIGN_STATE_SNAPSHOT",
+                }, status="RECOVERED", next_action=latest.get("next_action"))
             references = [base_state, stage_summary, *overlays, *decisions]
             missing = sorted({relative for relative in references if not (self.root / relative).is_file()})
             if missing:
@@ -74,7 +88,6 @@ class EngineV17(EngineV16):
             }, status="RECOVERED", next_action=next_action)
 
         return self._stamp(self._guard(command, operation))
-
     def image_review(self, project: str, campaign: str, candidates: Path, run_apis: bool = False, revision_count: int = 0):
         command = "image.review.run" if run_apis else "image.review.prepare"
 
