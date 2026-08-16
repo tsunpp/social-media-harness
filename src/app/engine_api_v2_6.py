@@ -14,7 +14,7 @@ from app.direction_alignment_v2_6 import validate_alignment
 from app.direction_contract_v2_6 import confirm_contract, invalidate_contract, read_json as read_direction_json, validate_confirmation
 from app.direction_grill_v2_6 import build_direction_context, direction_questions, draft_contract, record_answers
 from app.review_pipeline_v2_6 import prepare_complete_evidence, run_resumable_panel
-from app.head_discovery import current_head
+from app.head_discovery import current_head, head_chain
 
 
 ENGINE_API_VERSION = "2.6"
@@ -120,6 +120,21 @@ class EngineV26(EngineV25):
         if head is None and (project or campaign):
             selected = current_head(self.root, project=project, campaign=campaign)
             head = str(selected.relative_to(self.root)).replace("\\", "/")
+        selected = current_head(self.root) if head is None else self.root / head
+        chain = head_chain(self.root, selected)
+        latest = chain[-1][1]
+        if not latest.get("base_state") and not latest.get("current_stage_summary"):
+            command = "recover"
+            relative = str(selected.relative_to(self.root)).replace("\\", "/")
+            return self._stamp(self._success(command, {
+                "head": relative,
+                "head_chain": [str(path.relative_to(self.root)).replace("\\", "/") for path, _ in chain],
+                "state_snapshot": latest,
+                "project": latest.get("project"),
+                "campaign": latest.get("campaign"),
+                "reference_count": 1,
+                "recovery_mode": "CAMPAIGN_STATE_SNAPSHOT",
+            }, status="RECOVERED", next_action=latest.get("next_action")))
         return self._stamp(super().recover(head))
 
     def authorization_resolve(self, project, campaign, recipient, materials, identifiable_people, metadata_stripped, privacy_preflight):
