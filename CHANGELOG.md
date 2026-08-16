@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0 - 2026-08-16
+
+- Added an owner-confirmed, hash-bound Direction Contract before Narrative-First planning.
+- Added research-first Direction Grill sessions that ask only owner judgment questions in batches of at most three.
+- Added Engine 2.6 API and CLI commands for direction context, questions, answers, confirmation, validation, and invalidation.
+- Added direction-alignment validation for all three narrative options while preserving legacy Campaign recovery.
+- Added explicit anti-direction, viewer-shift, creative-center, and self-adversarial completion requirements.
+- Kept publication owner-only; direction confirmation never authorizes production or publication.
+
 ## 0.1.1 - 2026-08-15
 
 - Removed project-specific identifiers, defaults, examples, and planning facts from reusable code.

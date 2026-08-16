@@ -5,7 +5,9 @@
 
 Social Media Harness is a narrative-first, privacy-aware production workflow for authentic social-media videos, covers, captions, review evidence, platform packages, and immutable archives.
 
-The current public release is software version **0.1.1** and contains the **Engine 2.6** workflow model. It separates reusable software from private campaigns and keeps publication owner-controlled.
+The current public release is software version **0.2.0** and contains the **Engine 2.6** workflow model. It separates reusable software from private campaigns and keeps publication owner-controlled.
+
+Version 0.2.0 adds Direction Grill: a research-first, owner-confirmed creative-direction contract that must be aligned before new Campaigns enter Narrative-First planning. Direction confirmation is hash-bound, recoverable, and never grants production or publication authority.
 
 ## What it provides
 

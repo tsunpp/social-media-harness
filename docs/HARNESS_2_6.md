@@ -2,6 +2,10 @@
 
 Harness 2.6 extends Engine 2.5 without rewriting the frozen Engine 2.3 predecessor or historical archives.
 
+## Direction alignment gate
+
+New Campaigns establish facts and source evidence, then run Direction Grill before creating the three Narrative-First options. Engine 2.6 persists owner judgments, requires a self-adversarial countercase, and binds explicit owner confirmation to a canonical Direction Contract hash. Planning and final publication-package construction reject missing, stale, or divergent direction records. Legacy and archived Campaigns remain recoverable without rewriting their history, and publication remains owner-only.
+
 ## Changes
 
 1. Project-scoped authorization matrices persist recipient, material, identifiable-person and metadata rules. A standing authorization removes repeated confirmations only inside its recorded scope.

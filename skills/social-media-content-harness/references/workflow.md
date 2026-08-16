@@ -3,20 +3,21 @@
 1. Recover project and Campaign state.
 2. Ingest, hash, catalog, and privacy-check media.
 3. Establish Campaign brief and machine-checkable facts.
-4. Create three micro-story skeletons before shot ranking.
-5. Resolve the Engine 2.6 authorization matrix, then send each active reviewer its complete modality-specific evidence: systematic visual evidence to Claude, source proxies and complete video to MiniMax, and the sanitized dossier plus provenance to Kimi when authorized.
-6. Let Codex repair ordinary narrative issues and adjudicate evidence-backed differences by modality authority, not majority vote. Run optional DeepSeek text adversarial review only at its bounded stages.
-7. Select shots by narrative function and verify every beat.
-8. Create segment contracts with source windows, text jobs, color, audio, transition, route, facts, and acceptance criteria.
-9. Render and review each segment plus the cumulative timeline.
-10. Automatically revise ordinary defects within quality and loop guards.
-11. Assemble the master and synchronize the final story contract to the render.
-12. Run the Engine 2.6 privacy-adaptive panel against that contract using complete evidence for every claimed modality; record bounded reasons for inactive reviewers and never fabricate PASS.
-13. Resolve modality conflicts with Engine 2.6, consult the independent audio authority registry, and require authoritative panel clearance. Keep the owner listening gate for complete-audio/BGM decisions until a validated audio authority is persisted.
-14. Mark the master `APPROVED_NOT_PUBLISHED`.
-15. Validate the synchronized final contract, then build platform-profile-specific files, covers, captions, subtitles, and an archive manifest v3 publication package.
-16. Wait for explicit owner publication authorization.
-17. Archive as `SMmmddyyyyNN` and update memory.
+4. Run Direction Grill, persist owner judgments, complete the self-adversarial check, and obtain a hash-bound owner-confirmed Direction Contract.
+5. Create three direction-aligned micro-story skeletons before shot ranking.
+6. Resolve the Engine 2.6 authorization matrix, then send each active reviewer its complete modality-specific evidence: systematic visual evidence to Claude, source proxies and complete video to MiniMax, and the sanitized dossier plus provenance to Kimi when authorized.
+7. Let Codex repair ordinary narrative issues and adjudicate evidence-backed differences by modality authority, not majority vote. Run optional DeepSeek text adversarial review only at its bounded stages.
+8. Select shots by narrative function and verify every beat.
+9. Create segment contracts with source windows, text jobs, color, audio, transition, route, facts, and acceptance criteria.
+10. Render and review each segment plus the cumulative timeline.
+11. Automatically revise ordinary defects within quality and loop guards.
+12. Assemble the master and synchronize the final story contract to the render.
+13. Run the Engine 2.6 privacy-adaptive panel against that contract using complete evidence for every claimed modality; record bounded reasons for inactive reviewers and never fabricate PASS.
+14. Resolve modality conflicts with Engine 2.6, consult the independent audio authority registry, and require authoritative panel clearance. Keep the owner listening gate for complete-audio/BGM decisions until a validated audio authority is persisted.
+15. Mark the master `APPROVED_NOT_PUBLISHED`.
+16. Validate the synchronized final contract, then build platform-profile-specific files, covers, captions, subtitles, and an archive manifest v3 publication package.
+17. Wait for explicit owner publication authorization.
+18. Archive as `SMmmddyyyyNN` and update memory.
 
 ## Tool routing
 

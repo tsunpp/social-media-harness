@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from app.review_policy import aggregate_reviews, utc_now, validate_review
+from app.direction_contract_v2_6 import validate_confirmation
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -82,6 +83,9 @@ def validate_plan_options(plan: dict[str, Any], campaign: str) -> None:
 def prepare_planning_context(root: Path, project: str, campaign: str) -> dict[str, Any]:
     project_dir = root / "projects" / project
     campaign_dir = root / "campaigns" / campaign
+    direction_required = campaign_dir / "direction" / "required.json"
+    if direction_required.is_file():
+        validate_confirmation(root, campaign)
     brief_path = campaign_dir / "brief.yaml"
     source_manifest_path = campaign_dir / "source" / "manifest.json"
     source_manifest = read_json(source_manifest_path) if source_manifest_path.is_file() else {}
@@ -184,6 +188,8 @@ def prepare_planning_context(root: Path, project: str, campaign: str) -> dict[st
         "blind_context": {"enabled": bool(blind.get("enabled")), "prior_creative_history_excluded": bool(blind.get("enabled")), "historical_head_content_loaded": not bool(blind.get("enabled")), "project_snapshot": str(project_config_path.relative_to(root)).replace("\\", "/"), "fact_snapshot": str(project_decisions_path.relative_to(root)).replace("\\", "/")},
         "next_action": "CODEX_CREATE_OR_UPDATE_THREE_PLAN_OPTIONS",
     }
+    if direction_required.is_file():
+        context["direction_confirmation"] = validate_confirmation(root, campaign)
     output = campaign_dir / "plans" / "planning-context.json"
     write_json(output, context)
     write_json(campaign_dir / "plans" / "planning-evidence-manifest.json", context["evidence"])

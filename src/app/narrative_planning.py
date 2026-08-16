@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from app.direction_alignment_v2_6 import CORE_FIELDS
+
 
 REQUIRED_BEATS = ("hook", "development", "turn", "reveal", "resolution")
 REQUIRED_QUESTIONS = (
@@ -38,6 +40,11 @@ def validate_narrative_option(option: dict[str, Any]) -> None:
     uncovered = [beat for beat in REQUIRED_BEATS if beat not in covered]
     if uncovered:
         raise ValueError(f"Option {option.get('id')} lacks source evidence for beats: {uncovered}")
+    alignment = option.get("direction_alignment")
+    if alignment is not None:
+        missing_alignment = [field for field in CORE_FIELDS if alignment.get(field) is not True]
+        if missing_alignment or alignment.get("anti_direction_triggered") or alignment.get("unsupported_promises"):
+            raise ValueError(f"Option {option.get('id')} diverges from confirmed direction: {missing_alignment}")
 
 
 def narrative_review_contract() -> str:

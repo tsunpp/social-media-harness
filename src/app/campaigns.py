@@ -12,6 +12,7 @@ from app.states import INITIAL_STATE, can_transition
 
 CAMPAIGN_DIRECTORIES = (
     "source",
+    "direction",
     "selected",
     "plans",
     "drafts",
@@ -45,6 +46,11 @@ def create_campaign(root: Path, db_path: Path, slug: str, title: str) -> Path:
 
     for relative in CAMPAIGN_DIRECTORIES:
         (campaign_path / relative).mkdir(parents=True, exist_ok=True)
+
+    (campaign_path / "direction" / "required.json").write_text(
+        json.dumps({"schema_version": 1, "required": True, "campaign": slug}, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
     now = utc_now()
     brief = {
