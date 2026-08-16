@@ -262,7 +262,7 @@ def call_claude(root: Path, request: dict[str, Any]) -> tuple[dict[str, Any], di
         raise RuntimeError("ANTHROPIC_API_KEY is not loaded")
     context = request["planning_context"]
     prompt = (
-        "You are Claude, the independent visual planning reviewer. Review all three candidate plans against the complete brief, project decisions, every asset catalog entry, all thumbnails and systematic keyframes. Check whether proposed shots actually exist, visual variety, composition, narrative, typography opportunities, privacy and authenticity. Active decisions override historical wording: the yellow material is DIAMOND mother liquor, not a yellow tray. Do not select direction for the owner; recommend an option and distinguish blockers from preferences.\n\n"
+        "You are Claude, the independent visual planning reviewer. Review all three candidate plans against the complete brief, project decisions, every asset catalog entry, all thumbnails and systematic keyframes. Check whether proposed shots actually exist, visual variety, composition, narrative, typography opportunities, privacy and authenticity. Treat the active project decisions supplied in this request as authoritative when they conflict with historical wording. Do not select direction for the owner; recommend an option and distinguish blockers from preferences.\n\n"
         + contract() + "\n\n" + request.get("mandatory_reviewer_output_contract", "") + "\n\nREQUEST:\n" + json.dumps(request, ensure_ascii=False)
     )
     content: list[dict[str, Any]] = [{"type": "text", "text": prompt}]
@@ -311,7 +311,7 @@ def call_minimax(root: Path, request: dict[str, Any]) -> tuple[dict[str, Any], d
         raise RuntimeError("MINIMAX_API_KEY is not loaded")
     context = request["planning_context"]
     prompt = (
-        "You are MiniMax M3, the independent multimodal planning reviewer. Review all three plans against the complete brief, project decisions, every asset record, all image evidence and every available proxy video. Evaluate whether planned moments exist in motion, pacing feasibility, audio opportunities, factual clarity, platform fit, privacy and generation risk. Active decisions override historical wording: the yellow material is DIAMOND mother liquor, not a yellow tray. Do not select direction for the owner.\n\n"
+        "You are MiniMax M3, the independent multimodal planning reviewer. Review all three plans against the complete brief, project decisions, every asset record, all image evidence and every available proxy video. Evaluate whether planned moments exist in motion, pacing feasibility, audio opportunities, factual clarity, platform fit, privacy and generation risk. Treat the active project decisions supplied in this request as authoritative when they conflict with historical wording. Do not select direction for the owner.\n\n"
         + contract() + "\n\n" + request.get("mandatory_reviewer_output_contract", "") + "\n\nREQUEST:\n" + json.dumps(request, ensure_ascii=False)
     )
     content: list[dict[str, Any]] = [{"type": "input_text", "text": prompt}]

@@ -1,8 +1,11 @@
 # Social Media Harness
 
+[![CI](https://github.com/tsunpp/social-media-harness/actions/workflows/ci.yml/badge.svg)](https://github.com/tsunpp/social-media-harness/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+
 Social Media Harness is a narrative-first, privacy-aware production workflow for authentic social-media videos, covers, captions, review evidence, platform packages, and immutable archives.
 
-This first public release is software version **0.1.0** and contains the **Engine 2.6** workflow model. It separates reusable software from private campaigns and keeps publication owner-controlled.
+The current public release is software version **0.1.1** and contains the **Engine 2.6** workflow model. It separates reusable software from private campaigns and keeps publication owner-controlled.
 
 ## What it provides
 
@@ -24,7 +27,14 @@ python -m pip install -e ".[dev]"
 smh --help
 ```
 
-Install FFmpeg separately and ensure it is on `PATH`, or set `SMH_FFMPEG` to its executable. Set `SMH_WORKSPACE` to a private working directory outside this repository.
+Create a private workspace outside the repository and inspect the available capabilities:
+
+```bash
+mkdir ../smh-workspace
+smh --root ../smh-workspace capabilities
+```
+
+Install FFmpeg separately and ensure it is on `PATH`, or set `SMH_FFMPEG` to its executable. External reviewer and generation adapters require their respective service credentials and may incur charges. Core validation, planning preparation, and capability inspection do not require paid API calls.
 
 ## Privacy boundary
 
@@ -34,7 +44,7 @@ See [Public readiness](docs/PUBLIC_READINESS.md), [Architecture](docs/ARCHITECTU
 
 ## Status
 
-Alpha software. Interfaces and schemas may change before 1.0. Contributions and reproducible bug reports are welcome.
+Alpha software. Interfaces, schemas, and adapter behavior may change before 1.0. It is not a hosted publishing service and never bypasses the owner publication gate. Contributions and reproducible bug reports are welcome.
 
 ## License
 

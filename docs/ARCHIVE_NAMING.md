@@ -2,7 +2,7 @@
 
 The canonical archive ID remains `SMmmddyyyyNN`. It is the immutable identity used for date allocation, lookup, verification, references, and OpenClaw handoff.
 
-New archive directory names use `SMmmddyyyyNN--content-slug`, for example `SM0813202601--vape-liquid-diamond-b`.
+New archive directory names use `SMmmddyyyyNN--content-slug`, for example `SM0813202601--sample-product-process-b`.
 
 The content slug:
 
