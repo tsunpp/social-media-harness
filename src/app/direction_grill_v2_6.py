@@ -16,6 +16,11 @@ QUESTIONS = (
     ("success_test", "What observable test proves the direction stayed aligned?", "All three story options may differ structurally but must produce the same viewer shift."),
 )
 
+AMBIGUOUS_ANSWERS = {
+    "都可以", "随便", "你决定", "你看着办", "差不多", "可能吧", "无所谓",
+    "anything", "whatever", "you decide", "not sure", "maybe",
+}
+
 
 def _campaign_dir(root: Path, campaign: str) -> Path:
     path = root / "campaigns" / campaign
@@ -26,26 +31,68 @@ def _campaign_dir(root: Path, campaign: str) -> Path:
 
 def build_direction_context(root: Path, project: str, campaign: str) -> dict[str, Any]:
     campaign_dir = _campaign_dir(root, campaign)
+    project_config = root / "projects" / project / "project.yaml"
+    brief = campaign_dir / "brief.yaml"
+    manifest = campaign_dir / "source" / "manifest.json"
+    fact_contract = campaign_dir / "source" / "fact-contract.json"
+    privacy = campaign_dir / "source" / "privacy-review.json"
+    required = (project_config, brief, manifest, fact_contract, privacy)
+    missing = [str(path.relative_to(root)).replace("\\", "/") for path in required if not path.is_file()]
+    if missing:
+        raise FileNotFoundError("FACTS_OR_EVIDENCE_REQUIRED: " + ", ".join(missing))
+
+    manifest_data = read_json(manifest)
+    fact_data = read_json(fact_contract)
+    privacy_data = read_json(privacy)
+    asset_ids = manifest_data.get("assets", [])
+    if not isinstance(asset_ids, list) or not asset_ids:
+        raise ValueError("FACTS_OR_EVIDENCE_REQUIRED: source manifest must reference at least one asset")
+    asset_records = []
+    for asset_id in asset_ids:
+        catalog = root / "asset_library" / "catalog" / f"{asset_id}.json"
+        if not catalog.is_file():
+            raise FileNotFoundError(f"FACTS_OR_EVIDENCE_REQUIRED: missing asset catalog record {asset_id}")
+        asset_records.append(read_json(catalog))
+    if privacy_data.get("status") not in {"PASS", "CLEARED", "APPROVED"}:
+        raise ValueError("FACTS_OR_EVIDENCE_REQUIRED: privacy preflight is not cleared")
+
     candidates = (
-        root / "projects" / project / "project.yaml",
+        project_config,
         root / "projects" / project / "PROJECT_DECISIONS.md",
-        campaign_dir / "brief.yaml",
-        campaign_dir / "source" / "manifest.json",
-        campaign_dir / "source" / "fact-contract.json",
+        brief,
+        manifest,
+        fact_contract,
+        privacy,
+        *(root / "asset_library" / "catalog" / f"{asset_id}.json" for asset_id in asset_ids),
     )
     sources = {}
     for path in candidates:
         if path.is_file():
             relative = str(path.relative_to(root)).replace("\\", "/")
             sources[relative] = file_hash(path)
-    if not (campaign_dir / "brief.yaml").is_file():
-        raise FileNotFoundError("Campaign brief is required before Direction Grill")
+    inferred = {}
+    for source in (fact_data, manifest_data):
+        defaults = source.get("owner_confirmed_direction_defaults", {})
+        if isinstance(defaults, dict):
+            inferred.update({key: str(value).strip() for key, value in defaults.items() if key in {q[0] for q in QUESTIONS} and str(value).strip()})
     context = {
         "schema_version": 1,
         "project": project,
         "campaign": campaign,
         "created_at": utc_now(),
         "source_hashes": sources,
+        "facts": {
+            "confirmed": fact_data.get("confirmed_facts", fact_data.get("facts", [])),
+            "prohibited_claims": fact_data.get("prohibited_claims", fact_data.get("must_not_imply", [])),
+            "unsupported_promises": fact_data.get("unsupported_promises", []),
+        },
+        "evidence": {
+            "asset_ids": asset_ids,
+            "asset_records": asset_records,
+            "privacy_status": privacy_data.get("status"),
+            "privacy_restrictions": privacy_data.get("restrictions", []),
+        },
+        "inferred_owner_judgments": inferred,
         "question_policy": {"discoverable_facts": "INVESTIGATE_DO_NOT_ASK_OWNER", "owner_judgments": "ASK_1_TO_3_BLOCKING_QUESTIONS", "recommendation_required": True, "self_adversarial_check_required": True},
         "next_action": "direction.questions",
     }
@@ -63,7 +110,7 @@ def direction_questions(root: Path, campaign: str) -> dict[str, Any]:
     if not context_path.is_file():
         raise FileNotFoundError("Direction context must be built first")
     session_path = direction / "direction-session.json"
-    session = read_json(session_path) if session_path.is_file() else {"schema_version": 1, "campaign": campaign, "answers": {}, "round": 0, "self_adversarial_check": None}
+    session = read_json(session_path) if session_path.is_file() else {"schema_version": 1, "campaign": campaign, "answers": dict(read_json(context_path).get("inferred_owner_judgments", {})), "answer_records": {}, "round": 0, "self_adversarial_check": None}
     unanswered = [item for item in QUESTIONS if item[0] not in session["answers"]]
     batch = [{"id": qid, "question": prompt, "recommended_answer": recommendation, "impact": "Blocks creative direction confirmation"} for qid, prompt, recommendation in unanswered[:3]]
     session["round"] += 1
@@ -82,12 +129,18 @@ def record_answers(root: Path, campaign: str, answers: dict[str, Any]) -> dict[s
         raise FileNotFoundError("Direction session must be started first")
     session = read_json(session_path)
     valid_ids = {item[0] for item in QUESTIONS}
-    for qid, answer in answers.get("answers", answers).items():
+    submitted = answers.get("answers", answers)
+    for qid, answer in submitted.items():
         if qid not in valid_ids:
             raise ValueError(f"Unknown Direction Grill question id: {qid}")
-        if not str(answer).strip():
+        normalized = str(answer).strip()
+        if not normalized:
             raise ValueError(f"Direction answer cannot be blank: {qid}")
-        session["answers"][qid] = str(answer).strip()
+        if normalized.casefold() in AMBIGUOUS_ANSWERS or len(normalized) < 4:
+            session.setdefault("answer_records", {})[qid] = {"raw": normalized, "normalized": None, "status": "AMBIGUOUS", "authority": "owner", "updated_at": utc_now()}
+            continue
+        session["answers"][qid] = normalized
+        session.setdefault("answer_records", {})[qid] = {"raw": normalized, "normalized": normalized, "status": "RESOLVED", "authority": "owner", "updated_at": utc_now()}
     if "self_adversarial_check" in answers:
         check = answers["self_adversarial_check"]
         if not isinstance(check, dict) or not str(check.get("strongest_countercase", "")).strip() or not str(check.get("disposition", "")).strip():
@@ -118,8 +171,11 @@ def draft_contract(root: Path, campaign: str) -> dict[str, Any]:
         "desired_viewer_shift": {"statement": a["viewer_shift"]},
         "creative_center": {"statement": a["creative_center"]},
         "tone": {"priority": a["tone_priority"]},
-        "must_communicate": [],
-        "must_not_imply": [],
+        "must_communicate": [
+            {"statement": item.get("statement", str(item)), "evidence_refs": [item.get("id", "FACT-CONTRACT")]}
+            for item in context.get("facts", {}).get("confirmed", [])
+        ],
+        "must_not_imply": list(context.get("facts", {}).get("prohibited_claims", [])),
         "anti_direction": [a["anti_direction"]],
         "success_tests": [a["success_test"]],
         "open_freedoms": ["opening form", "shot rhythm", "title wording"],

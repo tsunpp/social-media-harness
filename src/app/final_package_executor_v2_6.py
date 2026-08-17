@@ -28,11 +28,6 @@ def _paths(root: Path, spec: dict[str, Any]) -> dict[str, Path]:
     if spec.get("publishing_authorized", False):
         raise ValueError("Final package construction cannot authorize publication")
     paths = {key: _resolve(root, spec[key]) for key in ("master_video", "render_manifest", "publishing_copy", "cover", "final_story_contract", "final_review", "technical_gate", "owner_approval")}
-    direction_required = root / "campaigns" / spec["campaign"] / "direction" / "required.json"
-    if direction_required.is_file():
-        if not spec.get("direction_alignment_report"):
-            raise ValueError("Direction-enabled Campaign final package requires direction_alignment_report")
-        paths["direction_alignment_report"] = _resolve(root, spec["direction_alignment_report"])
     if spec.get("completion_gate"):
         paths["completion_gate"] = _resolve(root, spec["completion_gate"])
     for name, path in paths.items():
@@ -48,10 +43,18 @@ def prepare_final_package_v2_6(root: Path, spec_path: Path) -> dict[str, Any]:
     platform_result = validate_platform_output(root, spec["platform"], output, package)
     consistency = validate_final_contract(root, spec)
     direction = None
-    if "direction_alignment_report" in paths:
-        direction = validate_alignment(root, spec["campaign"], "publication-package", read_json(paths["direction_alignment_report"]))
+    if (root / "campaigns" / spec["campaign"] / "direction" / "required.json").is_file():
+        story = read_json(paths["final_story_contract"])
+        copy = read_json(paths["publishing_copy"])
+        package_artifact = {
+            "direction_trace": copy.get("direction_trace", story.get("direction_trace")),
+            "component_hashes": {name: sha256(paths[name]) for name in ("master_video", "render_manifest", "publishing_copy", "cover", "final_story_contract")},
+            "platform": spec["platform"],
+        }
+        direction = validate_alignment(root, spec["campaign"], "publication-package", package_artifact)
         if direction["status"] != "PASS":
             raise ValueError(f"Publication package diverges from confirmed direction: {direction}")
+        paths["direction_alignment_report"] = root / direction["report_path"]
     review = read_json(paths["final_review"])
     if review.get("next_action") != "FINAL_CANDIDATE" or review.get("blocking_issues"):
         raise ValueError("Final review has not cleared the candidate")
@@ -70,6 +73,8 @@ def prepare_final_package_v2_6(root: Path, spec_path: Path) -> dict[str, Any]:
 def build_final_package_v2_6(root: Path, spec_path: Path) -> dict[str, Any]:
     prepared = prepare_final_package_v2_6(root, spec_path)
     spec = read_json(_resolve(root, spec_path)); paths = _paths(root, spec)
+    if prepared.get("direction_alignment"):
+        paths["direction_alignment_report"] = root / prepared["direction_alignment"]["report_path"]
     destination = root / "archive" / spec["archive_id"]
     staging = root / "archive" / f".{spec['archive_id']}.staging"
     if staging.exists():

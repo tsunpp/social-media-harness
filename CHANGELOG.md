@@ -4,6 +4,7 @@
 
 - Added an owner-confirmed, hash-bound Direction Contract before Narrative-First planning.
 - Added research-first Direction Grill sessions that ask only owner judgment questions in batches of at most three.
+- Hardened Direction Grill prerequisites, ambiguous-answer handling, engine-generated alignment reports, and all four downstream drift checkpoints.
 - Added Engine 2.6 API and CLI commands for direction context, questions, answers, confirmation, validation, and invalidation.
 - Added direction-alignment validation for all three narrative options while preserving legacy Campaign recovery.
 - Added explicit anti-direction, viewer-shift, creative-center, and self-adversarial completion requirements.

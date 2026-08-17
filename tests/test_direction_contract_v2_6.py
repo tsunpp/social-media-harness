@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from app.direction_contract_v2_6 import confirm_contract, contract_hash, invalidate_contract, validate_confirmation, validate_direction_contract
+from app.direction_contract_v2_6 import confirm_contract, contract_hash, file_hash, invalidate_contract, validate_confirmation, validate_direction_contract
 
 
 def dump(path: Path, value) -> Path:
@@ -14,7 +14,7 @@ def dump(path: Path, value) -> Path:
     return path
 
 
-def contract(campaign="demo"):
+def contract(campaign="demo", source_hashes=None):
     return {
         "schema_version": 1,
         "campaign": campaign,
@@ -24,10 +24,14 @@ def contract(campaign="demo"):
         "desired_viewer_shift": {"statement": "from result to credible process"},
         "creative_center": {"statement": "process is protagonist"},
         "tone": {"priority": "restrained authenticity"},
+        "must_communicate": [{"statement": "Real process", "evidence_refs": ["FACT-1"]}],
+        "must_not_imply": ["unverified efficacy"],
         "anti_direction": ["generic product advertisement"],
         "success_tests": ["all options create the same viewer shift"],
+        "open_freedoms": ["shot rhythm"],
         "unresolved_owner_decisions": [],
-        "source_hashes": {},
+        "self_adversarial_check": {"strongest_countercase": "Product-led may convert faster", "disposition": "Reject"},
+        "source_hashes": source_hashes or {"source.json": "sha256:" + "0" * 64},
     }
 
 
@@ -42,7 +46,8 @@ class DirectionContractTests(unittest.TestCase):
     def test_confirm_is_owner_only_and_hash_bound(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
-            path = dump(root / "draft.json", contract())
+            source = dump(root / "source.json", {"fact": True})
+            path = dump(root / "draft.json", contract(source_hashes={"source.json": file_hash(source)}))
             with self.assertRaisesRegex(ValueError, "Only owner"):
                 confirm_contract(root, "demo", path, "codex")
             result = confirm_contract(root, "demo", path, "owner")
@@ -61,7 +66,8 @@ class DirectionContractTests(unittest.TestCase):
     def test_invalidation_preserves_history(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
-            confirm_contract(root, "demo", dump(root / "draft.json", contract()), "owner")
+            source = dump(root / "source.json", {"fact": True})
+            confirm_contract(root, "demo", dump(root / "draft.json", contract(source_hashes={"source.json": file_hash(source)})), "owner")
             result = invalidate_contract(root, "demo", "Audience changed", "owner")
             self.assertEqual(result["status"], "DIRECTION_ALIGNMENT_PENDING")
             self.assertTrue(any((root / "campaigns/demo/direction/history").iterdir()))

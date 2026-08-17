@@ -49,6 +49,8 @@ class EngineV26(EngineV25):
             "blocks_narrative_planning": True,
             "hash_bound": True,
             "legacy_campaign_compatible": True,
+            "engine_generated_reports": True,
+            "checkpoints": ["narrative-options", "shot-to-function", "final-master", "publication-package"],
             "publication_authorized": False,
         }
         capabilities["resumable_four_agent_review"] = {
@@ -110,7 +112,14 @@ class EngineV26(EngineV25):
     def direction_validate(self, project, campaign, artifact_type, artifact):
         command = "direction.validate"
         path = artifact if artifact.is_absolute() else self.root / artifact
-        return self._stamp(self._guard(command, lambda: self._success(command, validate_alignment(self.root, campaign, artifact_type, read_direction_json(path)), status="DIRECTION_ALIGNMENT_VALIDATED")))
+        def operation():
+            report = validate_alignment(self.root, campaign, artifact_type, read_direction_json(path))
+            if report["status"] == "PASS":
+                return self._success(command, report, status="DIRECTION_ALIGNMENT_VALIDATED", next_action="continue_workflow")
+            result = self._failure(command, report["status"], f"Direction alignment failed: {report['status']}", status=report["status"], next_action="direction.reconfirm" if report["status"] == "OWNER_RECONFIRMATION_REQUIRED" else "revise_artifact")
+            result.data = report
+            return result
+        return self._stamp(self._guard(command, operation))
 
     def direction_invalidate(self, project, campaign, reason, actor):
         command = "direction.invalidate"

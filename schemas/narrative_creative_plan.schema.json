@@ -18,18 +18,14 @@
             "required": ["audience_question", "middle_change", "visual_climax", "ending_insight", "text_progression", "source_feasibility", "beats"]
           },
           "narrative_evidence_coverage": {"type": "array", "minItems": 5}
-          ,"direction_alignment": {
+          ,"direction_trace": {
             "type": "object",
-            "required": ["direction_contract_hash", "core_intent_supported", "audience_fit", "viewer_shift_supported", "creative_center_preserved", "tone_fit", "anti_direction_triggered", "unsupported_promises"],
+            "required": ["direction_contract_hash", "core_intent", "audience", "viewer_shift", "creative_center", "tone", "promises", "anti_direction_hits"],
             "properties": {
               "direction_contract_hash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
-              "core_intent_supported": {"type": "boolean"},
-              "audience_fit": {"type": "boolean"},
-              "viewer_shift_supported": {"type": "boolean"},
-              "creative_center_preserved": {"type": "boolean"},
-              "tone_fit": {"type": "boolean"},
-              "anti_direction_triggered": {"type": "boolean"},
-              "unsupported_promises": {"type": "array"}
+              "core_intent": {"type": "string"}, "audience": {"type": "string"},
+              "viewer_shift": {"type": "string"}, "creative_center": {"type": "string"},
+              "tone": {"type": "string"}, "promises": {"type": "array"}, "anti_direction_hits": {"type": "array"}
             }
           }
           ,"visual_style_contract": {"type": "object"}

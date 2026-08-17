@@ -4,7 +4,7 @@ Use this gate after Campaign facts and source evidence are available and before 
 
 ## Investigate before asking
 
-Read the Campaign brief, source manifest, fact contract, project rules, active decisions, and asset catalog first. Resolve discoverable facts with evidence. Ask the owner only for creative judgments that materially change intent, audience, viewer shift, protagonist, tone priority, promises, or prohibited directions.
+Require the Campaign brief, source manifest, fact contract, cleared privacy preflight, project rules, and every referenced asset catalog record first. Resolve discoverable facts with evidence. Ask the owner only for creative judgments that materially change intent, audience, viewer shift, protagonist, tone priority, promises, or prohibited directions. Return `FACTS_OR_EVIDENCE_REQUIRED` instead of starting the Grill when any prerequisite is absent.
 
 ## Question loop
 
@@ -30,3 +30,5 @@ Write a Direction Contract through Engine 2.6 and request explicit owner confirm
 Require a new owner confirmation when core intent, audience, viewer shift, protagonist, tone priority, or product promise changes. Ordinary shot substitutions, timing repairs, platform encoding, and wording refinements remain automatic when they preserve the confirmed direction.
 
 Validate direction alignment after the three story options, after story/shot mapping, after final master synchronization, and at cover/caption/platform-package completion.
+
+At each checkpoint submit the real artifact with a hash-bound `direction_trace`; never accept caller-authored PASS booleans. Let Engine 2.6 generate and persist the alignment report from the active contract, the trace, evidence references, and artifact/component hashes. A direction-enabled shot mapping must assign every segment an authentic `asset_id` and one `narrative_function`.

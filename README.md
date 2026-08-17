@@ -9,6 +9,8 @@ The current public release is software version **0.2.0** and contains the **Engi
 
 Version 0.2.0 adds Direction Grill: a research-first, owner-confirmed creative-direction contract that must be aligned before new Campaigns enter Narrative-First planning. Direction confirmation is hash-bound, recoverable, and never grants production or publication authority.
 
+Direction-enabled Campaigns require complete fact, privacy, manifest, and asset-catalog evidence; reject ambiguous owner answers; and use Engine-generated, hash-bound drift reports at narrative-option, shot-mapping, final-master, and publication-package checkpoints.
+
 ## What it provides
 
 - exactly three evidence-testable story options before shot ranking;

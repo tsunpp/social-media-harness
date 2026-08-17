@@ -35,7 +35,7 @@ class DirectionEngineTests(unittest.TestCase):
             self.assertEqual(result.status, "DIRECTION_ALIGNMENT_PENDING")
             self.assertEqual(result.next_action, "direction.context")
 
-    def test_direction_campaign_final_package_requires_alignment_report(self):
+    def test_direction_campaign_final_package_requires_real_artifacts(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             marker = root / "campaigns/demo/direction/required.json"
@@ -44,7 +44,7 @@ class DirectionEngineTests(unittest.TestCase):
             spec = {"archive_id": "SM0816202601", "display_name": "Demo", "campaign": "demo", "platform": "youtube_shorts", "master_video": "master.mp4", "render_manifest": "render.json", "publishing_copy": "copy.json", "cover": "cover.jpg", "final_story_contract": "contract.json", "final_review": "review.json", "technical_gate": "technical.json", "owner_approval": "approval.json"}
             path = root / "spec.json"
             path.write_text(json.dumps(spec), encoding="utf-8")
-            with self.assertRaisesRegex(ValueError, "direction_alignment_report"):
+            with self.assertRaises(FileNotFoundError):
                 prepare_final_package_v2_6(root, path)
 
 

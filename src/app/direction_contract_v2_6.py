@@ -15,6 +15,10 @@ REQUIRED_FIELDS = (
     "tone",
     "anti_direction",
     "success_tests",
+    "must_communicate",
+    "must_not_imply",
+    "open_freedoms",
+    "self_adversarial_check",
 )
 
 
@@ -84,7 +88,7 @@ def validate_direction_contract(contract: dict[str, Any], campaign: str | None =
         raise ValueError("Direction Contract schema_version must be 1")
     if campaign is not None and contract.get("campaign") != campaign:
         raise ValueError("Direction Contract campaign does not match")
-    missing = [name for name in REQUIRED_FIELDS if not contract.get(name)]
+    missing = [name for name in REQUIRED_FIELDS if name not in contract]
     if missing:
         raise ValueError(f"Direction Contract missing required fields: {missing}")
     if contract.get("status") == "OWNER_CONFIRMED" and contract.get("unresolved_owner_decisions"):
@@ -93,6 +97,16 @@ def validate_direction_contract(contract: dict[str, Any], campaign: str | None =
         raise ValueError("Direction Contract requires at least one anti_direction")
     if not isinstance(contract.get("success_tests"), list) or not contract["success_tests"]:
         raise ValueError("Direction Contract requires at least one success test")
+    if not isinstance(contract.get("source_hashes"), dict) or not contract["source_hashes"]:
+        raise ValueError("Direction Contract requires non-empty source_hashes")
+    for claim in contract.get("must_communicate", []):
+        if not isinstance(claim, dict) or not str(claim.get("statement", "")).strip() or not claim.get("evidence_refs"):
+            raise ValueError("Every must_communicate claim requires statement and evidence_refs")
+    check = contract.get("self_adversarial_check")
+    if not isinstance(check, dict) or not str(check.get("strongest_countercase", "")).strip() or not str(check.get("disposition", "")).strip():
+        raise ValueError("Direction Contract requires a complete self_adversarial_check")
+    if contract.get("status") == "OWNER_CONFIRMED" and (contract.get("confirmed_by") != "owner" or not contract.get("confirmed_at")):
+        raise ValueError("OWNER_CONFIRMED Direction Contract requires owner and confirmation time")
     supplied = contract.get("contract_hash")
     calculated = contract_hash(contract)
     if supplied and supplied != calculated:

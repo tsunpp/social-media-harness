@@ -5,6 +5,7 @@ from typing import Any
 
 from app.image_review_orchestrator import sha256
 from app.planning_orchestrator import read_json
+from app.direction_alignment_v2_6 import validate_alignment
 
 
 def _resolve(root: Path, value: str | Path) -> Path:
@@ -27,6 +28,15 @@ def validate_final_contract(root: Path, spec: dict[str, Any]) -> dict[str, Any]:
     contract = read_json(contract_path)
     render = read_json(render_path)
     publishing = read_json(copy_path)
+    direction = None
+    campaign = spec.get("campaign")
+    if campaign and (root / "campaigns" / campaign / "direction" / "required.json").is_file():
+        direction_artifact = dict(contract)
+        if "direction_alignment" not in direction_artifact and isinstance(render.get("direction_alignment"), dict):
+            direction_artifact["direction_alignment"] = render["direction_alignment"]
+        direction = validate_alignment(root, campaign, "final-story-contract-master", direction_artifact)
+        if direction["status"] != "PASS":
+            raise ValueError(f"Final story contract/master diverges from confirmed direction: {direction}")
     output = render.get("output", {})
     mismatches: list[str] = []
     expected_duration = float(contract.get("final_duration_seconds", contract.get("target_duration_seconds", 0)))
@@ -57,5 +67,6 @@ def validate_final_contract(root: Path, spec: dict[str, Any]) -> dict[str, Any]:
         "master_sha256": actual_hash,
         "publishing_copy_sha256": sha256(copy_path),
         "publication_authorized": False,
+        "direction_alignment": direction,
     }
 
