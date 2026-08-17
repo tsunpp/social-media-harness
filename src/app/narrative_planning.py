@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 REQUIRED_BEATS = ("hook", "development", "turn", "reveal", "resolution")
 REQUIRED_QUESTIONS = (
     "audience_question", "middle_change", "visual_climax", "ending_insight",
@@ -38,6 +37,9 @@ def validate_narrative_option(option: dict[str, Any]) -> None:
     uncovered = [beat for beat in REQUIRED_BEATS if beat not in covered]
     if uncovered:
         raise ValueError(f"Option {option.get('id')} lacks source evidence for beats: {uncovered}")
+    trace = option.get("direction_trace")
+    if trace is not None and not isinstance(trace, dict):
+        raise ValueError(f"Option {option.get('id')} direction_trace must be an object")
 
 
 def narrative_review_contract() -> str:

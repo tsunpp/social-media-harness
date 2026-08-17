@@ -5,7 +5,11 @@ INITIAL_STATE = "NEW"
 
 TRANSITIONS: dict[str, tuple[str, ...]] = {
     "NEW": ("INGESTED", "REJECTED"),
-    "INGESTED": ("PLANNED", "REJECTED"),
+    # INGESTED -> PLANNED remains for legacy Campaign recovery. New Campaigns
+    # carry a direction/required.json marker and are blocked by planning preflight.
+    "INGESTED": ("DIRECTION_ALIGNMENT_PENDING", "PLANNED", "REJECTED"),
+    "DIRECTION_ALIGNMENT_PENDING": ("DIRECTION_CONFIRMED", "HUMAN_DECISION", "REJECTED"),
+    "DIRECTION_CONFIRMED": ("PLANNED", "DIRECTION_ALIGNMENT_PENDING", "REJECTED"),
     "PLANNED": ("PLAN_APPROVED", "HUMAN_DECISION", "REJECTED"),
     "PLAN_APPROVED": ("DRAFT_RENDERED", "HUMAN_DECISION", "REJECTED"),
     "DRAFT_RENDERED": ("UNDER_REVIEW", "HUMAN_DECISION", "REJECTED"),

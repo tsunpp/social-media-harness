@@ -27,9 +27,15 @@ Read [architecture.md](references/architecture.md) when selecting project, Campa
 - Require stable file hashes, explicit status, reviewer evidence, Codex adjudication, and a next action at every stage.
 - Save every material stage result before proceeding. Do not depend on the conversation context as project memory.
 
+## Align creative direction
+
+For every new Campaign, read [direction-grill.md](references/direction-grill.md) after facts and source evidence are established and before Narrative-First planning. Investigate discoverable facts instead of asking the owner. Ask only high-impact creative judgments in batches of 1–3, give a recommended answer with its consequence, run the required self-adversarial check, and persist stable question IDs and answers.
+
+Do not create the three story options until Engine 2.6 validates an explicit, hash-bound `OWNER_CONFIRMED` Direction Contract with no unresolved owner decisions. Bind every downstream story, master, cover, caption, and platform-package alignment report to the active contract hash. A material change to core intent, audience, viewer shift, creative center, tone priority, or product promise invalidates the old confirmation and returns to direction alignment. Direction confirmation never authorizes production or publication.
+
 ## Enforce Narrative-First planning
 
-Before ranking shots, create exactly three evidence-testable micro-story skeletons. Require each to define the audience question, middle change or discovery, visual climax, ending insight, story-advancing text progression, authentic source feasibility, five narrative beats, and verified asset IDs for every beat.
+After direction confirmation and before ranking shots, create exactly three evidence-testable micro-story skeletons. Require each to define the audience question, middle change or discovery, visual climax, ending insight, story-advancing text progression, authentic source feasibility, five narrative beats, verified asset IDs for every beat, and a passing alignment record bound to the active Direction Contract hash.
 
 Reject an attractive montage without progression. Reject label-only copy. If a required documentary beat is missing, revise the story or request new capture; never silently generate the missing factual event.
 

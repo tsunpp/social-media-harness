@@ -10,8 +10,11 @@ from app.engine_api_v2_5 import EngineV25
 from app.planning_orchestrator import read_json
 from app.platform_profiles_v2_6 import load_profiles, validate_platform_output
 from app.final_package_executor_v2_6 import build_final_package_v2_6, prepare_final_package_v2_6, verify_final_package_v2_6
+from app.direction_alignment_v2_6 import validate_alignment
+from app.direction_contract_v2_6 import confirm_contract, invalidate_contract, read_json as read_direction_json, validate_confirmation
+from app.direction_grill_v2_6 import build_direction_context, direction_questions, draft_contract, record_answers
 from app.review_pipeline_v2_6 import prepare_complete_evidence, run_resumable_panel
-from app.head_discovery import current_head
+from app.head_discovery import current_head, head_chain
 
 
 ENGINE_API_VERSION = "2.6"
@@ -40,6 +43,16 @@ class EngineV26(EngineV25):
             "implemented": True,
             "rule": "Only activated, authorized reviewers may receive evidence; inactive modalities are recorded, never fabricated as PASS.",
         }
+        capabilities["direction_alignment_gate"] = {
+            "implemented": True,
+            "owner_confirmation_required": True,
+            "blocks_narrative_planning": True,
+            "hash_bound": True,
+            "legacy_campaign_compatible": True,
+            "engine_generated_reports": True,
+            "checkpoints": ["narrative-options", "shot-to-function", "final-master", "publication-package"],
+            "publication_authorized": False,
+        }
         capabilities["resumable_four_agent_review"] = {
             "implemented": True,
             "reviewers": ["claude", "minimax", "kimi"],
@@ -63,10 +76,74 @@ class EngineV26(EngineV25):
         result.data["recovery_head_selection"] = "campaign_scoped_freshest_valid_head_with_legacy_chain_compatibility"
         return self._stamp(result)
 
+    def direction_context(self, project, campaign):
+        command = "direction.context"
+        return self._stamp(self._guard(command, lambda: self._success(command, build_direction_context(self.root, project, campaign), status="DIRECTION_CONTEXT_READY", next_action="direction.questions")))
+
+    def direction_status(self, project, campaign):
+        command = "direction.status"
+        def operation():
+            required = (self.root / "campaigns" / campaign / "direction" / "required.json").is_file()
+            try:
+                confirmation = validate_confirmation(self.root, campaign)
+                return self._success(command, {"project": project, "campaign": campaign, "required": required, **confirmation}, status="DIRECTION_CONFIRMED", next_action="narrative.prepare")
+            except (FileNotFoundError, ValueError) as exc:
+                return self._success(command, {"project": project, "campaign": campaign, "required": required, "reason": str(exc)}, status="DIRECTION_ALIGNMENT_PENDING", next_action="direction.context")
+        return self._stamp(self._guard(command, operation))
+
+    def direction_questions(self, project, campaign):
+        command = "direction.questions"
+        return self._stamp(self._guard(command, lambda: self._success(command, direction_questions(self.root, campaign), status="AWAITING_OWNER_DIRECTION", next_action="direction.answer")))
+
+    def direction_answer(self, project, campaign, answers):
+        command = "direction.answer"
+        path = answers if answers.is_absolute() else self.root / answers
+        return self._stamp(self._guard(command, lambda: self._success(command, record_answers(self.root, campaign, read_direction_json(path)), status="DIRECTION_ANSWERS_RECORDED")))
+
+    def direction_draft(self, project, campaign):
+        command = "direction.draft"
+        return self._stamp(self._guard(command, lambda: self._success(command, draft_contract(self.root, campaign), status="AWAITING_OWNER_DIRECTION_CONFIRMATION", next_action="direction.confirm")))
+
+    def direction_confirm(self, project, campaign, contract, actor):
+        command = "direction.confirm"
+        path = contract if contract.is_absolute() else self.root / contract
+        return self._stamp(self._guard(command, lambda: self._success(command, confirm_contract(self.root, campaign, path, actor), status="DIRECTION_CONFIRMED", next_action="narrative.prepare")))
+
+    def direction_validate(self, project, campaign, artifact_type, artifact):
+        command = "direction.validate"
+        path = artifact if artifact.is_absolute() else self.root / artifact
+        def operation():
+            report = validate_alignment(self.root, campaign, artifact_type, read_direction_json(path))
+            if report["status"] == "PASS":
+                return self._success(command, report, status="DIRECTION_ALIGNMENT_VALIDATED", next_action="continue_workflow")
+            result = self._failure(command, report["status"], f"Direction alignment failed: {report['status']}", status=report["status"], next_action="direction.reconfirm" if report["status"] == "OWNER_RECONFIRMATION_REQUIRED" else "revise_artifact")
+            result.data = report
+            return result
+        return self._stamp(self._guard(command, operation))
+
+    def direction_invalidate(self, project, campaign, reason, actor):
+        command = "direction.invalidate"
+        return self._stamp(self._guard(command, lambda: self._success(command, invalidate_contract(self.root, campaign, reason, actor), status="DIRECTION_ALIGNMENT_PENDING", next_action="direction.context")))
+
     def recover(self, head: str | None = None, project: str | None = None, campaign: str | None = None):
         if head is None and (project or campaign):
             selected = current_head(self.root, project=project, campaign=campaign)
             head = str(selected.relative_to(self.root)).replace("\\", "/")
+        selected = current_head(self.root) if head is None else self.root / head
+        chain = head_chain(self.root, selected)
+        latest = chain[-1][1]
+        if not latest.get("base_state") and not latest.get("current_stage_summary"):
+            command = "recover"
+            relative = str(selected.relative_to(self.root)).replace("\\", "/")
+            return self._stamp(self._success(command, {
+                "head": relative,
+                "head_chain": [str(path.relative_to(self.root)).replace("\\", "/") for path, _ in chain],
+                "state_snapshot": latest,
+                "project": latest.get("project"),
+                "campaign": latest.get("campaign"),
+                "reference_count": 1,
+                "recovery_mode": "CAMPAIGN_STATE_SNAPSHOT",
+            }, status="RECOVERED", next_action=latest.get("next_action")))
         return self._stamp(super().recover(head))
 
     def authorization_resolve(self, project, campaign, recipient, materials, identifiable_people, metadata_stripped, privacy_preflight):

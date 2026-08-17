@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "campaign": "synthetic-campaign",
+  "status": "DRAFT_AWAITING_OWNER",
+  "core_intent": {"statement": "Use authentic process evidence to build trust"},
+  "audience": {"primary": "Viewers who care how the result was made"},
+  "desired_viewer_shift": {"statement": "From seeing a result to understanding why it is credible"},
+  "creative_center": {"statement": "The authentic process is the protagonist; the product is outcome evidence"},
+  "tone": {"priority": "Restrained authenticity first, warmth second"},
+  "must_communicate": ["A visible change connects process to result"],
+  "must_not_imply": ["Unsupported performance claims"],
+  "anti_direction": ["A generic product advertisement without progression"],
+  "success_tests": ["All three story structures create the same viewer shift"],
+  "open_freedoms": ["Opening form", "Shot rhythm", "Title wording"],
+  "unresolved_owner_decisions": [],
+  "source_hashes": {}
+}

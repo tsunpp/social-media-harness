@@ -16,6 +16,7 @@ from app.visual_style_profiles import (
     resolve_visual_style,
     validate_narrative_style_contract,
 )
+from app.direction_alignment_v2_6 import validate_narrative_options_alignment
 
 
 def validate_narrative_plan(plan: dict[str, Any], campaign: str) -> None:
@@ -40,6 +41,8 @@ def prepare_narrative_review(root: Path, project: str, campaign: str, plan_path:
         raise FileNotFoundError(f"Narrative plan options not found: {path}")
     plan = read_json(path)
     validate_narrative_plan(plan, campaign)
+    if (root / "campaigns" / campaign / "direction" / "required.json").is_file():
+        validate_narrative_options_alignment(root, campaign, plan)
     validate_narrative_style_contract(plan, visual_style)
     if visual_style is not None:
         context["visual_style_contract"] = public_style_contract(visual_style)
@@ -57,7 +60,7 @@ def prepare_narrative_review(root: Path, project: str, campaign: str, plan_path:
         "plan_path": str(path.relative_to(root)).replace("\\", "/"),
         "plan_options": plan,
         "planning_context": context,
-        "stage_order": ["facts", "three_story_skeletons", "dual_narrative_review", "codex_adjudication", "evidence_based_asset_selection", "beat_coverage_gate", "segmented_production"],
+        "stage_order": ["facts", "owner_confirmed_direction", "three_story_skeletons", "direction_alignment", "dual_narrative_review", "codex_adjudication", "evidence_based_asset_selection", "beat_coverage_gate", "segmented_production"],
         "owner_gate": "Owner is interrupted only for factual uncertainty, incompatible creative directions, or final direction review; ordinary narrative repairs route to Codex.",
     }
     if visual_style is not None:

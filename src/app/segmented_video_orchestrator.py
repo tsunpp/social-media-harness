@@ -8,6 +8,7 @@ from app.image_review_orchestrator import sha256
 from app.planning_orchestrator import read_json, write_json
 from app.review_policy import utc_now
 from app.visual_style_profiles import public_style_contract, resolve_visual_style, validate_segment_style_contract
+from app.direction_alignment_v2_6 import validate_alignment
 
 
 PASS_DECISIONS = {"PASS", "APPROVE"}
@@ -44,6 +45,14 @@ def prepare_segment_plan(root: Path, plan_path: Path) -> dict[str, Any]:
     path = _resolve(root, plan_path)
     plan = read_json(path)
     validate_segment_plan(plan)
+    if (root / "campaigns" / plan["campaign"] / "direction" / "required.json").is_file():
+        result = validate_alignment(root, plan["campaign"], "shot-to-function-map", plan)
+        if result["status"] != "PASS":
+            raise ValueError(f"Shot-to-function mapping diverges from confirmed direction: {result}")
+        selected = next(x for x in plan["candidate_schemes"] if x["scheme_id"] == plan["selected_scheme"])
+        for segment in selected["segments"]:
+            if not segment.get("asset_id") or not segment.get("narrative_function"):
+                raise ValueError("Direction-enabled shot mapping requires asset_id and narrative_function for every segment")
     visual_style = resolve_visual_style(root, plan["campaign"])
     validate_segment_style_contract(plan, visual_style)
     work_dir = path.parent / "segmented-workflow"
@@ -58,6 +67,7 @@ def prepare_segment_plan(root: Path, plan_path: Path) -> dict[str, Any]:
         },
         "required_reviewers": ["claude", "minimax"],
         "consensus_rule": "both reviewers PASS the same selected scheme before any segment may execute",
+        "direction_alignment": result if 'result' in locals() else None,
     }
     if visual_style is not None:
         request["visual_style_profile"] = visual_style["id"]
